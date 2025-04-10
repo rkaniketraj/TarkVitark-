@@ -4,7 +4,9 @@ import React from 'react'
 import Landing from './pages/Landing'
 import LeftSideBar from './components/LeftSideBar'
 import Footer from './components/Footer'
- import ProfilePage from './pages/ProfilePage'
+ //import ProfilePage from './pages/ProfilePage'
+import Login from './pages/login'
+ 
 
 function App() {
   
@@ -13,7 +15,8 @@ function App() {
     <>
      {/* <Landing/> */}
      <LeftSideBar/>
-     <ProfilePage/>
+     {/* <ProfilePage/> */}
+     <Login/>
 
      
     
