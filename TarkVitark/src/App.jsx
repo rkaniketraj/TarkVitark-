@@ -7,6 +7,7 @@ import Footer from './components/Footer'
  //import ProfilePage from './pages/ProfilePage'
 import Login from './pages/login'
 import Register from './pages/Register'
+import ActiveDiscussion from './pages/ActiveDiscussion'
  
 
 function App() {
@@ -15,10 +16,12 @@ function App() {
   return (
     <>
      {/* <Landing/> */}
-     <LeftSideBar/>
+     {/* <LeftSideBar/> */}
      {/* <ProfilePage/> */}
      {/* <Login/> */}
-     <Register/>
+     {/* <Register/> */}
+     <ActiveDiscussion/>
+     
 
      
     
