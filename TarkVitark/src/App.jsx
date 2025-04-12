@@ -4,6 +4,7 @@ import React from 'react'
 import Landing from './pages/Landing'
 import LeftSideBar from './components/LeftSideBar'
 import Footer from './components/Footer'
+ //
  import ProfilePage from './pages/ProfilePage'
 
 function App() {
@@ -12,9 +13,9 @@ function App() {
   return (
     <>
      {/* <Landing/> */}
-     <LeftSideBar/>
-     <ProfilePage/>
-
+      <LeftSideBar/>
+    
+    <ProfilePage/>
      
     
     </>
