@@ -8,7 +8,7 @@ import Footer from './components/Footer'
 import Login from './pages/login'
 import Register from './pages/Register'
 import ActiveDiscussion from './pages/ActiveDiscussion'
- 
+import FutureEvents from './pages/FutureEvents'
 
 function App() {
   
@@ -20,7 +20,8 @@ function App() {
      {/* <ProfilePage/> */}
      {/* <Login/> */}
      {/* <Register/> */}
-     <ActiveDiscussion/>
+     {/* <ActiveDiscussion/> */}
+     <FutureEvents/>
      
 
      
