@@ -2,7 +2,7 @@ import { useState } from "react";
 import { Sun, Moon, UserCircle } from "lucide-react";
 import { PlaceholdersAndVanishInput } from "../ui/Placeholder";
 export default function Navbar() {
-  const [darkMode, setDarkMode] = useState(false);
+const [darkMode, setDarkMode] = useState(false);
 
   return (
     <nav className="bg-gradient-to-r from-blue-600 to-violet-600  text-white px-6 py-3 flex items-center justify-between">

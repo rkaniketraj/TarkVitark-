@@ -19,7 +19,7 @@ const LeftSideBar = () => {
   const [activeTab, setActiveTab] = useState('home');
 
   return (
-    <nav className="fixed left-0 top-0 h-screen w-64 bg-gradient-to-b from-blue-600 via-violet-600 to-white p-6 shadow-2xl
+    <nav className="fixed left-0  h-screen w-64 bg-gradient-to-b from-blue-600 via-violet-600 to-white p-6 shadow-2xl
       transform transition-transform duration-300 lg:translate-x-0
       -translate-x-full sm:translate-x-0">
       <div className="flex flex-col h-full">
