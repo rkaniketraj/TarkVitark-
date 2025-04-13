@@ -10,6 +10,7 @@ import Footer from './components/Footer'
 import Login from './pages/login'
 import Register from './pages/Register'
 import Navbar from './components/Navbar'
+import ActiveDiscussion from './pages/ActiveDiscussion'
  
 
 function App() {
