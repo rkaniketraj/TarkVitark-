@@ -20,8 +20,7 @@ function App() {
 
   return (
     <>
-   
-     <HomePage/>
+    {/*<HomePage/> */}
      {/* <Landing/> */}
      {/* <LeftSideBar/> */}
      {/* <ProfilePage/> */}
