@@ -11,6 +11,7 @@ function Login() {
   const navigate = useNavigate();
 
   const handleSubmit = (e) => {
+    
     e.preventDefault();
     // Perform login logic here using mock user data
     const mockUser = {
