@@ -1,12 +1,15 @@
 import { useState } from "react";
 import { Sun, Moon, UserCircle } from "lucide-react";
 import { PlaceholdersAndVanishInput } from "../ui/Placeholder";
+import { Link } from "react-router-dom";
 export default function Navbar() {
 const [darkMode, setDarkMode] = useState(false);
 
   return (
     <nav className="bg-gradient-to-r from-blue-600 to-violet-600  text-white px-6 py-3 flex items-center justify-between">
-      <div className="text-xl font-bold">TARKVITARK</div>
+      <div className="text-xl font-bold">
+        <Link to="/">TARKVITARK</Link>
+      </div>
 
       <PlaceholdersAndVanishInput 
         placeholders={["Search for debates...", "Search by topics...", "Search by users..."]}
@@ -28,8 +31,10 @@ const [darkMode, setDarkMode] = useState(false);
         >
           {darkMode ? <Sun size={20} /> : <Moon size={20} />}
         </button>
+        <Link to="/profile">
 
         <UserCircle size={28} className="text-white cursor-pointer" />
+        </Link>
       </div>
     </nav>
   );

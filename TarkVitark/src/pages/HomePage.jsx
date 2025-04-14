@@ -5,11 +5,12 @@ import UpcomingDebates from '../components/UpcomingDebates';
 import ActiveDebates from '../components/ActiveDebates';
 import Footer from '../components/Footer';
 import LeftSideBar from '../components/LeftSideBar';
+import { Link,useNavigate } from 'react-router';
 
 function HomePage() {
+  const navigate = useNavigate(); 
   const handleNavigate = (path) => {
-    console.log(`Navigating to ${path}`);
-    // Use React Router's useNavigate() in real usage
+    navigate(path);
   };
 
   return (
@@ -35,8 +36,8 @@ function HomePage() {
                 Welcome Chirag! Ready to debate?
               </h1>
               <div className="flex flex-col w-full space-y-8">
-                <UpcomingDebates onClick={handleNavigate} />
-                <ActiveDebates onClick={handleNavigate} />
+                <UpcomingDebates onClick={()=>handleNavigate('/upcoming')} />
+                <ActiveDebates onClick={()=>handleNavigate('/active')} />
               </div>
             </div>
           </div>

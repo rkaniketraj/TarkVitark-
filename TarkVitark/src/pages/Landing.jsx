@@ -14,6 +14,7 @@ import {
   Heart,
   CheckCircle2,
 } from 'lucide-react';
+import { Link } from 'react-router';
 
 function Landing() {
   return (
@@ -29,10 +30,12 @@ function Landing() {
               Join global discussions in real time, no language barriers.
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
+            <Link to="/login">
               <button className="bg-green-500 hover:bg-green-600 text-white px-8 py-4 rounded-lg font-semibold text-lg transition-colors flex items-center justify-center gap-2">
                 Start Debating
                 <ChevronRight className="h-5 w-5" />
               </button>
+              </Link>
               <button className="bg-white/10 hover:bg-white/20 backdrop-blur-sm text-white px-8 py-4 rounded-lg font-semibold text-lg transition-colors">
                 Host a Session
               </button>
