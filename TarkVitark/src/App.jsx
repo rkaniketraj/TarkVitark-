@@ -11,11 +11,16 @@ import Register from './pages/Register'
 import ActiveDiscussion from './pages/ActiveDiscussion'
 import FutureEvents from './pages/FutureEvents'
 import ProfilePage from './pages/ProfilePage'
+import DiscussionPage from './pages/DiscussionPage'
+
 
 const App = () => {
   return (
     <>
     
+     
+
+     
     
       
       <Routes>
@@ -26,6 +31,7 @@ const App = () => {
         <Route path="/active" element={<ActiveDiscussion />} />
         <Route path="/upcoming" element={<FutureEvents />} />
         <Route path="/profile" element={<ProfilePage />} />
+        <Route path="/discuss" element={<DiscussionPage/>}/>
       </Routes>
       
     </>
