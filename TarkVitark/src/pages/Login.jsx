@@ -1,15 +1,34 @@
 import React, { useState } from 'react';
 import { Mail, Lock, LogIn } from 'lucide-react';
 import Button from '../components/Button';
-import { Link } from 'react-router';
+import { Link, useNavigate } from 'react-router';
+// import { toast } from 'react-toastify';
+
 
 function Login() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const navigate = useNavigate();
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    
+    // Perform login logic here using mock user data
+    const mockUser = {
+      email: 'test@gmail.com',
+      password: '12345678',
+    };
+
+    if (email === mockUser.email && password === mockUser.password) {
+      console.log('Login successful');
+      // toast.success('Login successful!');
+    } else {
+      console.error('Invalid email or password');
+      // toast.error('Invalid email or password');
+      return;
+    }
+
+    navigate('/home'); // Redirect to home page after login
+
     console.log('Login attempt:', { email, password });
   };
 
@@ -80,14 +99,14 @@ function Login() {
               Forgot password?
             </a>
           </div>
-          <Link to="/home">
+          {/* <Link> */}
           <Button
             type="submit"
             className="w-full bg-blue-600 hover:bg-blue-700 text-white focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
           >
             Login
           </Button>
-          </Link>
+          {/* </Link> */}
         </form>
 
         <div className="text-center text-sm">

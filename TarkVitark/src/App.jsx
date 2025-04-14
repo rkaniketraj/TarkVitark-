@@ -15,17 +15,7 @@ import ProfilePage from './pages/ProfilePage'
 const App = () => {
   return (
     <>
-    {/*<HomePage/> */}
-     {/* <Landing/> */}
-     {/* <LeftSideBar/> */}
-     {/* <ProfilePage/> */}
-     {/* <Login/> */}
-     {/* <Register/> */}
-     {/* <ActiveDiscussion/> */}
-     <FutureEvents/>
-     
-
-     
+    
     
       
       <Routes>

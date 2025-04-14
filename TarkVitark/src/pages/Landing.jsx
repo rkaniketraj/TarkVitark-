@@ -15,6 +15,7 @@ import {
   CheckCircle2,
 } from 'lucide-react';
 import { Link } from 'react-router';
+import { TypingAnimation } from '../ui/TypingAnimation';
 
 function Landing() {
   return (
@@ -24,10 +25,10 @@ function Landing() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-24">
           <div className="text-center">
             <h1 className="text-4xl md:text-6xl font-bold mb-6">
-              Debate the World. Understand Everyone.
+             <TypingAnimation>Debate the World. Understand Everyone.</TypingAnimation> 
             </h1>
             <p className="text-xl md:text-2xl mb-8 text-blue-100">
-              Join global discussions in real time, no language barriers.
+          <TypingAnimation>Join global discussions in real time, no language barriers.</TypingAnimation>    
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
             <Link to="/login">

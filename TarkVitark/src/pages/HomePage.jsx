@@ -43,9 +43,9 @@ function HomePage() {
           </div>
 
           {/* Notification bar - Fixed until footer */}
-          <div className="fixed right-0 top-16 bottom-0 w-80 overflow-y-auto">
+          {/* <div className="fixed right-0 top-16 bottom-0 w-80 overflow-y-auto">
             <NotificationBar />
-          </div>
+          </div> */}
         </div>
 
         {/* Footer - Full width after content */}
