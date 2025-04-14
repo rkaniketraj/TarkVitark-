@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { Home, Search, Flame, FileText } from 'lucide-react';
+import { Link } from 'react-router';
 
 const NavItem = ({ icon, label, isActive, onClick }) => (
   <button
@@ -24,12 +25,14 @@ const LeftSideBar = () => {
       -translate-x-full sm:translate-x-0">
       <div className="flex flex-col h-full">
         <div className="space-y-2">
+        <Link to ="/home">
           <NavItem
             icon={<Home size={20} />}
             label="Home"
             isActive={activeTab === 'home'}
             onClick={() => setActiveTab('home')}
           />
+          </Link>
           <NavItem
             icon={<Search size={20} />}
             label="Explore"

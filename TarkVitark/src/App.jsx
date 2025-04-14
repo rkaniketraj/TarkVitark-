@@ -1,44 +1,31 @@
-
 import React from 'react'
-<<<<<<< HEAD
+import { Routes, Route } from 'react-router-dom'
 
 import HomePage from './pages/HomePage'
-//import Navbar from 'react'
-import  Navbar from './components/Navbar'
- 
-=======
-//import './App.css'
+import Navbar from './components/Navbar'
 import Landing from './pages/Landing'
 import LeftSideBar from './components/LeftSideBar'
 import Footer from './components/Footer'
- //import ProfilePage from './pages/ProfilePage'
 import Login from './pages/login'
 import Register from './pages/Register'
 import ActiveDiscussion from './pages/ActiveDiscussion'
 import FutureEvents from './pages/FutureEvents'
->>>>>>> e99f7a73a3c75827b3a9e7745083e62c370ab655
+import ProfilePage from './pages/ProfilePage'
 
-function App() {
-  
-
+const App = () => {
   return (
     <>
-<<<<<<< HEAD
-   
-     <HomePage/>
-=======
-     {/* <Landing/> */}
-     {/* <LeftSideBar/> */}
-     {/* <ProfilePage/> */}
-     {/* <Login/> */}
-     {/* <Register/> */}
-     {/* <ActiveDiscussion/> */}
-     <FutureEvents/>
-     
-
->>>>>>> e99f7a73a3c75827b3a9e7745083e62c370ab655
-     
-    
+      
+      <Routes>
+        <Route path="/" element={<Landing />} />
+        <Route path="/home" element={<HomePage />} />
+        <Route path="/login" element={<Login />} />
+        <Route path="/register" element={<Register />} />
+        <Route path="/active" element={<ActiveDiscussion />} />
+        <Route path="/upcoming" element={<FutureEvents />} />
+        <Route path="/profile" element={<ProfilePage />} />
+      </Routes>
+      
     </>
   )
 }

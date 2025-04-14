@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { Mail, Lock, LogIn } from 'lucide-react';
 import Button from '../components/Button';
+import { Link } from 'react-router';
 
 function Login() {
   const [email, setEmail] = useState('');
@@ -79,20 +80,21 @@ function Login() {
               Forgot password?
             </a>
           </div>
-
+          <Link to="/home">
           <Button
             type="submit"
             className="w-full bg-blue-600 hover:bg-blue-700 text-white focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
           >
-            Sign in
+            Login
           </Button>
+          </Link>
         </form>
 
         <div className="text-center text-sm">
           <span className="text-gray-600">Don't have an account? </span>
-          <a href="#" className="font-medium text-blue-600 hover:text-blue-500">
+          <Link to ="/register" className="font-medium text-blue-600 hover:text-blue-500">
             Sign up
-          </a>
+          </Link>
         </div>
       </div>
     </div>
