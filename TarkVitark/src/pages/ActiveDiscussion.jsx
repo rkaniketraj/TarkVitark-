@@ -1,10 +1,23 @@
 import React, { useState } from 'react';
-import { User2, Plus } from 'lucide-react';
+import { Plus } from 'lucide-react';
 import Navbar from '../components/Navbar';
 import LeftSideBar from '../components/LeftSideBar';
 import Footer from '../components/Footer';
+import Box from '../components/ActiveBox'; 
+// import { useNavigate } from 'react-router';
+ import { useNavigate } from 'react-router-dom';
 
 function ActiveDiscussion() {
+  const navigate = useNavigate(); 
+  const handleBoxClick = (box) => {
+    navigate('/discuss', {
+      state: {
+        title: box.title,
+        description: box.description,
+        author: box.author
+      }
+    });
+  }
   const [boxes, setBoxes] = useState([
     {
       id: 1,
@@ -68,21 +81,16 @@ function ActiveDiscussion() {
 
   return (
     <div className="flex flex-col min-h-screen">
-      {/* Navbar - Fixed at top */}
       <div className="fixed top-0 w-full z-50">
         <Navbar />
       </div>
 
-      {/* Main container */}
       <div className="flex flex-col flex-grow">
-        {/* Content wrapper with sidebars */}
         <div className="flex pt-16">
-          {/* Left Sidebar - Fixed */}
           <div className="fixed left-0 top-16 bottom-0 w-64 overflow-y-auto">
             <LeftSideBar />
           </div>
 
-          {/* Main content - Between sidebars */}
           <div className="flex-1 ml-64 p-8 min-h-screen">
             <div className="max-w-7xl mx-auto">
               <div className="flex justify-between items-center mb-8">
@@ -98,36 +106,19 @@ function ActiveDiscussion() {
 
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                 {boxes.map(box => (
-                  <div 
-                    key={box.id}
-                    className="bg-white rounded-lg shadow-md border border-gray-100 p-6 transition-all hover:shadow-lg"
-                  >
-                    <div className="space-y-4">
-                      <h3 className="text-lg font-medium text-gray-900">
-                        {box.title}
-                      </h3>
-                      <p className="text-gray-600">
-                        {box.description}
-                      </p>
-                      <div className="flex items-center justify-between pt-4">
-                        <div className="flex items-center space-x-2">
-                          <User2 className="h-5 w-5 text-gray-400" />
-                          <span className="text-sm text-gray-600">{box.author}</span>
-                        </div>
-                        <button className="px-3 py-1 text-sm bg-green-100 text-green-700 rounded-full font-medium flex items-center">
-                          <span className="w-2 h-2 bg-green-500 rounded-full mr-2"></span>
-                          Live
-                        </button>
-                      </div>
-                    </div>
-                  </div>
+                  <Box 
+                    key={box.id} 
+                    title={box.title}
+                    description={box.description}
+                    author={box.author}
+                    onClick={()=>handleBoxClick(box)} 
+                  />
                 ))}
               </div>
             </div>
           </div>
         </div>
 
-        {/* Footer */}
         <div className="w-full mt-auto bg-gray-800">
           <div className="w-full max-w-7xl mx-auto py-6 px-8 text-white">
             <Footer />

@@ -1,10 +1,16 @@
 import React from 'react';
 import { Calendar } from 'lucide-react';
+import { Link,useNavigate } from 'react-router';
 
-function UpcomingDebates({ onClick }) {
+function UpcomingDebates() {
+  const navigate = useNavigate(); 
+  const handleNavigate = (path) => {
+    navigate(path);
+  };
   return (
     <div
-      onClick={() => onClick('/upcoming-debates')}
+      //onClick={() => onClick()}
+      onClick={()=>handleNavigate('/upcoming')}
       className="group cursor-pointer bg-white rounded-2xl p-8 shadow-lg hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1 max-w-3xl"
     >
       <div className="flex items-center gap-4 mb-4 ">

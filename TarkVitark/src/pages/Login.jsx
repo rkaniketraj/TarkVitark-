@@ -8,6 +8,7 @@ function Login() {
   const [password, setPassword] = useState('');
 
   const handleSubmit = (e) => {
+    
     e.preventDefault();
     
     console.log('Login attempt:', { email, password });
@@ -80,14 +81,14 @@ function Login() {
               Forgot password?
             </a>
           </div>
-          <Link to="/home">
+          
           <Button
             type="submit"
             className="w-full bg-blue-600 hover:bg-blue-700 text-white focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
           >
             Login
           </Button>
-          </Link>
+          
         </form>
 
         <div className="text-center text-sm">

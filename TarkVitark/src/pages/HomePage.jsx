@@ -33,10 +33,10 @@ function HomePage() {
           <div className="flex-1 ml-64 mr-80 p-8 min-h-screen">
             <div className="max-w-4xl mx-auto">
               <h1 className="text-4xl font-bold mb-8 text-gray-800">
-                Welcome Chirag! Ready to debate?
+                Welcome 112! Ready to debate?
               </h1>
               <div className="flex flex-col w-full space-y-8">
-                <UpcomingDebates onClick={()=>handleNavigate('/upcoming')} />
+                <UpcomingDebates />
                 <ActiveDebates onClick={()=>handleNavigate('/active')} />
               </div>
             </div>

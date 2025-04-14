@@ -4,7 +4,7 @@ import { MessageSquare } from 'lucide-react';
 function ActiveDebates({ onClick }) {
   return (
     <div
-      onClick={() => onClick('/active-debates')}
+      onClick={() => onClick()}
       className="group cursor-pointer bg-white rounded-2xl p-8 shadow-lg hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1  max-w-3xl"
     >
       <div className="flex items-center gap-4 mb-4">
