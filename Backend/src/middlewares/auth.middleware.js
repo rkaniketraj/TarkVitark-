@@ -10,7 +10,7 @@ export const  verifyJWT=asyncHandler(async(req,res,next)=>{
      
         if(!token){
             throw new ApiError(
-                401,"unotherized request"
+                401,"unauthorized request"
             )
         }
             
