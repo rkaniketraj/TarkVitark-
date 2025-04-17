@@ -1,39 +1,34 @@
-const mongoose = require('mongoose');
+import mongoose from 'mongoose';
+import mongooseAggregatePaginate from 'mongoose-aggregate-paginate-v2';
+
 const { Schema } = mongoose;
 
 const debateRoomSchema = new Schema({
-  title: 
-  {
+  title: {
     type: String,
     required: true
   },
-  description:
-  {
-    type:String,
+  description: {
+    type: String,
     required: true
-  } ,
-  host: 
-  {
+  },
+  host: {
     type: Schema.Types.ObjectId,
     ref: 'User',
     required: true
   },
-  
-  participants: 
-  [
+  participants: [
     {
-    type: Schema.Types.ObjectId,
-    ref: 'User'
-  }
-],
- 
+      type: Schema.Types.ObjectId,
+      ref: 'User'
+    }
+  ],
   status: {
     type: String,
     enum: ['ongoing', 'scheduled', 'ended'],
     default: 'scheduled'
   },
-  scheduledAt: 
-  {
+  scheduledAt: {
     type: Date
   },
   for: {
@@ -46,4 +41,7 @@ const debateRoomSchema = new Schema({
   }
 }, { timestamps: true });
 
-module.exports = mongoose.model('DebateRoom', debateRoomSchema);
+
+debateRoomSchema.plugin(mongooseAggregatePaginate);
+
+export const DebateRoom = mongoose.model('DebateRoom', debateRoomSchema);
