@@ -1,59 +1,74 @@
-import React, { useState } from 'react';
-import { Home, Search, Flame, FileText } from 'lucide-react';
-import { Link } from 'react-router';
+"use client";
+import React, { useState } from "react";
+import { Home, Search, Flame, FileText } from "lucide-react";
+import { Sidebar, SidebarBody, SidebarLink } from "../ui/sidebar";
+import { motion } from "motion/react";
+import { cn } from "../lib/utils";
 
-const NavItem = ({ icon, label, isActive, onClick }) => (
-  <button
-    onClick={onClick}
-    className={`w-full flex items-center gap-3 px-4 py-3 rounded-2xl transition-all duration-200
-      ${isActive 
-        ? 'bg-white/10 backdrop-blur-sm text-white font-semibold' 
-        : 'text-white/70 hover:text-white hover:bg-white/5'
-      }`}
-  >
-    {icon}
-    <span>{label}</span>
-  </button>
-);
+const links = [
+  {
+    label: "Home",
+    href: "/home",
+    icon: <Home size={20} className="shrink-0 text-white" />,
+  },
+  {
+    label: "Explore",
+    href: "#",
+    icon: <Search size={20} className="shrink-0 text-white" />,
+  },
+  {
+    label: "Trending",
+    href: "#",
+    icon: <Flame size={20} className="shrink-0 text-white" />,
+  },
+  {
+    label: "All Posts",
+    href: "#",
+    icon: <FileText size={20} className="shrink-0 text-white" />,
+  },
+];
 
 const LeftSideBar = () => {
-  const [activeTab, setActiveTab] = useState('home');
+  const [open, setOpen] = useState(false);
 
   return (
-    <nav className="fixed left-0  h-screen w-64 bg-gradient-to-b from-blue-600 via-violet-600 to-white p-6 shadow-2xl
-      transform transition-transform duration-300 lg:translate-x-0
-      -translate-x-full sm:translate-x-0">
-      <div className="flex flex-col h-full">
-        <div className="space-y-2">
-        <Link to ="/home">
-          <NavItem
-            icon={<Home size={20} />}
-            label="Home"
-            isActive={activeTab === 'home'}
-            onClick={() => setActiveTab('home')}
-          />
-          </Link>
-          <NavItem
-            icon={<Search size={20} />}
-            label="Explore"
-            isActive={activeTab === 'explore'}
-            onClick={() => setActiveTab('explore')}
-          />
-          <NavItem
-            icon={<Flame size={20} />}
-            label="Trending"
-            isActive={activeTab === 'trending'}
-            onClick={() => setActiveTab('trending')}
-          />
-          <NavItem
-            icon={<FileText size={20} />}
-            label="All Posts"
-            isActive={activeTab === 'posts'}
-            onClick={() => setActiveTab('posts')}
-          />
-        </div>
-      </div>
-    </nav>
+    <div className="flex h-screen w-full">
+      {/* Sidebar */}
+      <Sidebar open={open} setOpen={setOpen} animate={true}>
+        <SidebarBody
+          className={cn(
+            "justify-between gap-10 bg-gradient-to-b from-blue-600 via-violet-600 to-white h-full overflow-hidden"
+          )}
+        >
+          <div className="flex flex-1 flex-col h-full">
+            <Logo />
+            <div className="mt-8 flex flex-col gap-2">
+              {links.map((link, idx) => (
+                <SidebarLink key={idx} link={link} />
+              ))}
+            </div>
+          </div>
+        </SidebarBody>
+      </Sidebar>
+    </div>
+  );
+};
+
+const Logo = () => {
+  return (
+    <a
+      href="#"
+      className="relative z-20 flex items-center space-x-2 py-1 text-sm font-normal text-white"
+    >
+      <div className="h-5 w-6 shrink-0 rounded-tl-lg rounded-tr-sm rounded-br-lg rounded-bl-sm bg-white" />
+      <motion.span
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        className="font-medium whitespace-pre"
+      >
+        
+      </motion.span>
+    </a>
   );
 };
 

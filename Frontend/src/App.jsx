@@ -13,16 +13,13 @@ import FutureEvents from './pages/FutureEvents'
 import ProfilePage from './pages/ProfilePage'
 import DiscussionPage from './pages/DiscussionPage'
 
+// added for the language
+import { LanguageProvider } from './context/LanguageContext'
+
 
 const App = () => {
   return (
-    <>
-    
-     
-
-     
-    
-      
+    <LanguageProvider>
       <Routes>
         <Route path="/" element={<Landing />} />
         <Route path="/home" element={<HomePage />} />
@@ -34,7 +31,7 @@ const App = () => {
         <Route path="/discuss" element={<DiscussionPage/>}/>
       </Routes>
       
-    </>
+    </LanguageProvider>
   )
 }
 

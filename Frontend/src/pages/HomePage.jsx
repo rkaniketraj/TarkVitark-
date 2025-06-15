@@ -25,14 +25,14 @@ function HomePage() {
         {/* Content wrapper with sidebars */}
         <div className="flex pt-16">
           {/* Left Sidebar - Fixed until footer */}
-          <div className="fixed left-0 top-16 bottom-0 w-64 overflow-y-auto">
+          <div className="fixed left-0 top-16 bottom-0 w-64 min-h-screen">
             <LeftSideBar />
           </div>
 
           {/* Main content - Between sidebars */}
           <div className="flex-1 ml-64 mr-80 p-8 min-h-screen">
             <div className="max-w-4xl mx-auto">
-              <h1 className="text-4xl font-bold mb-8 text-gray-800">
+              <h1 className="text-4xl font-bold mb-8 text-gray-800" data-translate="true">
                 Welcome Janta! Ready to debate?
               </h1>
               <div className="flex flex-col w-full space-y-8">
