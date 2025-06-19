@@ -1,16 +1,23 @@
-const app = require('./app');
-const http = require('http');
-const { Server } = require('socket.io');
-const socketHandler = require('./sockets');
+import dotenv from "dotenv";
+import connectDB from "./db/index.js";
+import { app } from './app.js';
 
-const server = http.createServer(app);
-const io = new Server(server, {
-  cors: {
-    origin: '*'
-  }
+dotenv.config({
+    path: './.env'
 });
 
-socketHandler(io);
+connectDB()
+.then(() => {
+    app.on("error", (error) => {
+        console.log("ERROR:", error);
+        throw error;
+    });
 
-const PORT = process.env.PORT || 5000;
-server.listen(PORT, () => console.log(`Server running on port ${PORT}`));
+    app.listen(process.env.PORT || 8000, () => {
+        console.log(`✅ Server is running at port: ${process.env.PORT}`);
+    });
+})
+.catch((err) => {
+    console.log("MongoDB connection failed!", err);
+    process.exit(1);
+});

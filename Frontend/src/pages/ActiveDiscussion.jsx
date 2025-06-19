@@ -5,7 +5,7 @@ import LeftSideBar from '../components/LeftSideBar';
 import Footer from '../components/Footer';
 import Box from '../components/ActiveBox'; 
 // import { useNavigate } from 'react-router';
- import { useNavigate } from 'react-router-dom';
+ import { useNavie } from 'react-router-dom';
 
 function ActiveDiscussion() {
   const navigate = useNavigate(); 

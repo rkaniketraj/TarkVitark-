@@ -5,10 +5,11 @@ import { ApiResponse } from "../utils/ApiResponse.js";
 import mongoose from "mongoose";
 import { DebateRoom } from "../models/debateRoom.modal.js";
 import { User } from "../models/user.modal.js";
+import DebateRegistration from "../models/debateRegistration.modal.js";
 
 // Get all active debates (status: 'active')
 const getActiveDebates = asyncHandler(async (req, res) => {
-  const debates = await DebateRoom.find({ status: 'active' })
+  const debates = await DebateRoom.find({ status: 'ongoing' })
     .populate('host', 'fullName username avatar')
     .sort({ createdAt: -1 });
   return res.status(200).json(new ApiResponse(200, debates, "Active debates fetched successfully"));
@@ -24,17 +25,60 @@ const getUpcomingDebates = asyncHandler(async (req, res) => {
 
 // Register user for a debate (with stance and rules agreement)
 const registerForDebate = asyncHandler(async (req, res) => {
-  const { debateId, stance } = req.body;
-  if (!debateId || !stance) throw new ApiError(400, "Debate ID and stance required");
-  const debate = await DebateRoom.findById(debateId);
-  if (!debate) throw new ApiError(404, "Debate not found");
-  if (debate.participants.includes(req.user._id)) {
-    return res.status(200).json(new ApiResponse(200, debate, "Already registered"));
+  const { debateId, stance, agreedToRules } = req.body;
+
+  // Validate required fields
+  if (!debateId) {
+    throw new ApiError(400, "Debate ID is required");
   }
-  debate.participants.push(req.user._id);
-  // Optionally store stance in a separate model or in participants array as object
-  await debate.save();
-  return res.status(200).json(new ApiResponse(200, debate, "Registered for debate"));
+  if (!stance || !['in_favor', 'against'].includes(stance)) {
+    throw new ApiError(400, "Valid stance is required");
+  }
+  if (!agreedToRules) {
+    throw new ApiError(400, "Must agree to debate rules");
+  }
+
+  // Get debate details and verify it's open for registration
+  const debate = await DebateRoom.findById(debateId);
+  if (!debate) {
+    throw new ApiError(404, "Debate not found");
+  }
+
+  if (debate.status !== "scheduled") {
+    throw new ApiError(400, "This debate is not open for registration");
+  }
+
+  try {
+    // Create registration record
+    const registration = await DebateRegistration.create({
+      debate: debateId,
+      participant: {
+        user: req.user._id,
+        stance,
+        agreedToRules
+      },
+      activityLog: [{
+        action: "joined"
+      }]
+    });
+
+    // Add user to debate participants if not already there
+    if (!debate.participants.includes(req.user._id)) {
+      debate.participants.push(req.user._id);
+      await debate.save();
+    }
+
+    // Return success response
+    return res.status(200).json(
+      new ApiResponse(200, registration, "Successfully registered for debate")
+    );
+  } catch (error) {
+    // Check for duplicate registration error
+    if (error.message === "User already registered for this debate") {
+      throw new ApiError(400, error.message);  
+    }
+    throw error;
+  }
 });
 
 // Get details for a specific debate

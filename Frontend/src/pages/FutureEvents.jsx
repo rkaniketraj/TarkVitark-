@@ -1,10 +1,11 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { User2, Calendar, Clock } from 'lucide-react';
 import Modal from 'react-modal';
 import { format } from 'date-fns';
 import Navbar from '../components/Navbar';
 import LeftSideBar from '../components/LeftSideBar';
 import Footer from '../components/Footer';
+import debateService from '../services/debateService';
 
 Modal.setAppElement('#root');
 
@@ -16,39 +17,64 @@ function FutureEvents() {
     agreedToRules: false
   });
   const [registeredDiscussions, setRegisteredDiscussions] = useState(new Set());
+  const [discussions, setDiscussions] = useState([]);
+  const [loading, setLoading] = useState(true);
 
-  const discussions = [
-    {
-      id: 1,
-      title: 'Is AI a Threat to Humanity?',
-      description: 'A debate on the ethical and existential risks of artificial intelligence.',
-      start_time: new Date().toISOString(),
-      moderator: 'Dr. Smith'
-    },
-    {
-      id: 2,
-      title: 'Should College Be Free?',
-      description: 'An open forum on the pros and cons of free higher education.',
-      start_time: new Date(Date.now() + 86400000).toISOString(),
-      moderator: 'Prof. Johnson'
-    }
-  ];
+  useEffect(() => {
+    const fetchDiscussions = async () => {
+      try {
+        const upcomingDebates = await debateService.getUpcomingDebates();
+        setDiscussions(upcomingDebates);
+      } catch (error) {
+        console.error('Failed to fetch upcoming debates:', error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchDiscussions();
+  }, []);
 
   const openRegistrationModal = (discussion) => {
     setSelectedDiscussion(discussion);
     setModalIsOpen(true);
   };
 
-  const handleRegistration = (e) => {
+  const handleRegistration = async (e) => {
     e.preventDefault();
+    
     if (!registrationData.stance || !registrationData.agreedToRules) {
       alert('Please fill in all required fields and agree to the rules.');
       return;
     }
-    setRegisteredDiscussions(prev => new Set([...prev, selectedDiscussion.id]));
-    setModalIsOpen(false);
-    setRegistrationData({ stance: '', agreedToRules: false });
+
+    try {
+      const response = await debateService.registerForDebate(
+        selectedDiscussion.id,
+        registrationData.stance,
+        registrationData.agreedToRules
+      );
+
+      // Update UI to show registered state
+      setRegisteredDiscussions(prev => new Set([...prev, selectedDiscussion.id]));
+      setModalIsOpen(false);
+      setRegistrationData({ stance: '', agreedToRules: false });
+
+      // Show success message
+      alert('Successfully registered for the debate!');
+    } catch (error) {
+      // Show error message
+      alert(error.response?.data?.message || 'Failed to register for debate');
+    }
   };
+
+  if (loading) {
+    return (
+      <div className="flex items-center justify-center min-h-screen">
+        <div className="loader"></div>
+      </div>
+    );
+  }
 
   return (
     <div className="flex flex-col min-h-screen">
