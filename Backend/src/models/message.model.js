@@ -62,3 +62,4 @@ messageSchema.statics.findRecentByDebate = function(debateId, limit = 50) {
 };
 
 const Message = mongoose.model('Message', messageSchema);
+export default Message;

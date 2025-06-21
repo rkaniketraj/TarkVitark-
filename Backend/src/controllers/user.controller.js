@@ -7,7 +7,7 @@ import jwt from "jsonwebtoken";
 import bcrypt from "bcrypt";
 import mongoose from "mongoose";
 import Follow from "../models/follow.model.js";
-import { DebateRoom } from "../models/debateRoom.modal.js";
+import { DebateRoom } from "../models/debateRoom.model.js";
 
 const generateAccessAndRefereshTokens=async(userId)=>{
     try{

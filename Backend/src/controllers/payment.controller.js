@@ -2,7 +2,7 @@
 import { asyncHandler } from "../utils/asyncHandler.js";
 import { ApiError } from "../utils/ApiError.js";
 import { ApiResponse } from "../utils/ApiResponse.js";
-import Payment from "../models/payment.modal.js";
+import { Payment } from "../models/payment.model.js";
 
 // List available plans (static for now)
 const getPlans = asyncHandler(async (req, res) => {

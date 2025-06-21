@@ -3,8 +3,8 @@ import { asyncHandler } from "../utils/asyncHandler.js";
 import { ApiError } from "../utils/ApiError.js";
 import { ApiResponse } from "../utils/ApiResponse.js";
 import mongoose from "mongoose";
-import Message from "../models/message.modal.js";
-import { DebateRoom } from "../models/debateRoom.modal.js";
+import Message from "../models/message.model.js";
+import { DebateRoom } from "../models/debateRoom.model.js";
 
 // Get all messages for a debate
 const getMessagesForDebate = asyncHandler(async (req, res) => {

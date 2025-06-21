@@ -130,4 +130,4 @@ paymentSchema.statics.calculateTotalRevenue = async function(currency = 'USD') {
 
 const Payment = mongoose.model('Payment', paymentSchema);
 
-module.exports = Payment;
+export { Payment };

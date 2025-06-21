@@ -3,9 +3,9 @@ import { asyncHandler } from "../utils/asyncHandler.js";
 import { ApiError } from "../utils/ApiError.js";
 import { ApiResponse } from "../utils/ApiResponse.js";
 import mongoose from "mongoose";
-import { DebateRoom } from "../models/debateRoom.modal.js";
-import { User } from "../models/user.modal.js";
-import DebateRegistration from "../models/debateRegistration.modal.js";
+import { DebateRoom } from "../models/debateRoom.model.js";
+import { User } from "../models/user.model.js";
+import DebateRegistration from "../models/debateRegistration.model.js";
 
 // Get all active debates (status: 'active')
 const getActiveDebates = asyncHandler(async (req, res) => {
@@ -120,6 +120,41 @@ const getParticipatedDebates = asyncHandler(async (req, res) => {
   return res.status(200).json(new ApiResponse(200, debates, "Participated debates fetched"));
 });
 
+// Join a debate (placeholder)
+const joinDebate = asyncHandler(async (req, res) => {
+  return res.status(200).json(new ApiResponse(200, null, "Joined debate (not implemented)"));
+});
+
+// Leave a debate (placeholder)
+const leaveDebate = asyncHandler(async (req, res) => {
+  return res.status(200).json(new ApiResponse(200, null, "Left debate (not implemented)"));
+});
+
+// Update debate status (placeholder)
+const updateDebateStatus = asyncHandler(async (req, res) => {
+  return res.status(200).json(new ApiResponse(200, null, "Debate status updated (not implemented)"));
+});
+
+// Vote on a debate (placeholder)
+const voteOnDebate = asyncHandler(async (req, res) => {
+  return res.status(200).json(new ApiResponse(200, null, "Voted on debate (not implemented)"));
+});
+
+// Get debate results (placeholder)
+const getDebateResults = asyncHandler(async (req, res) => {
+  return res.status(200).json(new ApiResponse(200, null, "Debate results (not implemented)"));
+});
+
+// Get messages for a debate (placeholder)
+const getDebateMessages = asyncHandler(async (req, res) => {
+  return res.status(200).json(new ApiResponse(200, [], "Debate messages fetched (not implemented)"));
+});
+
+// Send a message in a debate (placeholder)
+const sendMessage = asyncHandler(async (req, res) => {
+  return res.status(201).json(new ApiResponse(201, null, "Message sent (not implemented)"));
+});
+
 export {
   getActiveDebates,
   getUpcomingDebates,
@@ -128,4 +163,11 @@ export {
   createDebate,
   getHostedDebates,
   getParticipatedDebates,
+  joinDebate,
+  leaveDebate,
+  updateDebateStatus,
+  voteOnDebate,
+  getDebateResults,
+  getDebateMessages,
+  sendMessage,
 };
