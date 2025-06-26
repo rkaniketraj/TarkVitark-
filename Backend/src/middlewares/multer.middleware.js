@@ -13,5 +13,5 @@ export const upload = multer({ storage });
 
 // Use .fields to handle multiple fields, or .single for one field
 export const multerUploads = upload.fields([
-  { name: "avatar", maxCount: 1 }
+  { name: "profilePic", maxCount: 1 }
 ]);

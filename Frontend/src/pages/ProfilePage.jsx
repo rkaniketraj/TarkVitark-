@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import Button from '../components/Button';
 import { Users, UserCircle2 } from 'lucide-react';
 import Navbar from '../components/Navbar';
@@ -6,6 +6,31 @@ import LeftSideBar from '../components/LeftSideBar';
 import Footer from '../components/Footer';
 
 export default function ProfilePage() {
+  const [user, setUser] = useState(null);
+
+  useEffect(() => {
+    const getUser = async () => {
+      try {
+        const res = await fetch('http://localhost:8000/api/v1/users/current', {
+          credentials: 'include',
+        });
+
+        const data = await res.json();
+        if (res.ok) {
+          setUser(data.data);
+        } else {
+          console.error('Failed to fetch user:', data.message);
+        }
+      } catch (err) {
+        console.error('Error:', err);
+      }
+    };
+
+    getUser();
+  }, []);
+
+  const profileImage = user?.avatar || "https://avatars.githubusercontent.com/u/9919?s=280&v=4";
+
   return (
     <div className="flex flex-col min-h-screen">
       {/* Navbar - Fixed at top */}
@@ -32,7 +57,7 @@ export default function ProfilePage() {
                   <div className="relative bg-gradient-to-br from-blue-600 to-violet-600 p-2 rounded-full">
                     <div className="w-32 h-32 rounded-full bg-white overflow-hidden">
                       <img
-                        src="https://images.unsplash.com/photo-1494790108377-be9c29b29330?auto=format&fit=crop&q=80&w=256"
+                        src={profileImage}
                         alt="Profile"
                         className="w-full h-full object-cover"
                       />
@@ -41,8 +66,8 @@ export default function ProfilePage() {
 
                   {/* User Info */}
                   <div className="mt-6 text-center">
-                    <h1 className="text-2xl font-bold text-gray-900">Sarah Anderson</h1>
-                    <p className="text-gray-600 mt-1">@sarahanderson</p>
+                    <h1 className="text-2xl font-bold text-gray-900">{user?.fullName || "Loading..."}</h1>
+                    <p className="text-gray-600 mt-1">@{user?.username || "username"}</p>
                   </div>
 
                   {/* Stats */}
@@ -65,16 +90,10 @@ export default function ProfilePage() {
 
                   {/* Buttons */}
                   <div className="flex justify-center gap-4 mt-6">
-                    <Button
-                      className="bg-gradient-to-br from-blue-600 to-violet-600 text-white"
-                      onClick={() => {}}
-                    >
+                    <Button className="bg-gradient-to-br from-blue-600 to-violet-600 text-white">
                       Events Hosted
                     </Button>
-                    <Button
-                      className="bg-gradient-to-br from-blue-600 to-violet-600 text-white"
-                      onClick={() => {}}
-                    >
+                    <Button className="bg-gradient-to-br from-blue-600 to-violet-600 text-white">
                       Events Participated
                     </Button>
                   </div>

@@ -21,6 +21,11 @@ app.use(cookieParser());
 // Routes
 app.use('/api/v1', apiRouter);
 
+// temp route for testing purposes
+app.get('/test', (req, res) => {
+  res.send('Test route is working!');
+});
+
 // Health check route
 app.get("/health", (_, res) => {
     res.status(200).json({ status: "ok" });

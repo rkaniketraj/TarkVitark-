@@ -10,28 +10,55 @@ function Login() {
   const [password, setPassword] = useState('');
   const navigate = useNavigate();
 
-  const handleSubmit = (e) => {
+  // const handleSubmit = (e) => {
     
-    e.preventDefault();
-    // Perform login logic here using mock user data
-    const mockUser = {
-      email: 'test@gmail.com',
-      password: '12345678',
-    };
+  //   e.preventDefault();
+  //   // Perform login logic here using mock user data
+  //   const mockUser = {
+  //     email: 'test@gmail.com',
+  //     password: '12345678',
+  //   };
 
-    if (email === mockUser.email && password === mockUser.password) {
-      console.log('Login successful');
-      // toast.success('Login successful!');
+  //   if (email === mockUser.email && password === mockUser.password) {
+  //     console.log('Login successful');
+  //     // toast.success('Login successful!');
+  //   } else {
+  //     console.error('Invalid email or password');
+  //     // toast.error('Invalid email or password');
+  //     return;
+  //   }
+
+  //   navigate('/home'); // Redirect to home page after login
+
+  //   console.log('Login attempt:', { email, password });
+  // };
+
+const handleSubmit = async (e) => {
+  e.preventDefault();
+
+  try {
+    const response = await fetch(`${import.meta.env.VITE_API_BASE_URL}/api/v1/users/login`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      credentials: 'include', // required if you're using cookies for authentication
+      body: JSON.stringify({ email, password })
+    });
+
+    const data = await response.json();
+
+    if (response.ok) {
+      console.log('✅ Login successful:', data);
+      navigate('/home'); // redirect after success
     } else {
-      console.error('Invalid email or password');
-      // toast.error('Invalid email or password');
-      return;
+      console.error('❌ Login failed:', data.message || 'Invalid credentials');
     }
+  } catch (error) {
+    console.error('❌ Network error:', error.message);
+  }
+};
 
-    navigate('/home'); // Redirect to home page after login
-
-    console.log('Login attempt:', { email, password });
-  };
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 to-blue-100 flex items-center justify-center p-4">
@@ -110,11 +137,22 @@ function Login() {
           {/* </Link> */}
         </form>
 
-        <div className="text-center text-sm">
-          <span className="text-gray-600">Don't have an account? </span>
-          <Link to ="/register" className="font-medium text-blue-600 hover:text-blue-500">
-            Sign up
-          </Link>
+        <div className="text-center text-sm flex justify-between items-center">
+          <div>
+            <span className="text-gray-600">Don't have an account? </span>
+            <Link to="/register" className="font-medium text-blue-600 hover:text-blue-500">
+              Sign up
+            </Link>
+          </div>
+          <button
+            onClick={() => {
+              setEmail('test@gmail.com');
+              setPassword('12345678');
+            }}
+            className="font-medium text-purple-600 hover:text-blue-500 ml-4"
+          >
+            Demo User
+          </button>
         </div>
       </div>
     </div>

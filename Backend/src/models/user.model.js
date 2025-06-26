@@ -12,6 +12,11 @@ const userSchema = new Schema(
       trim: true,
       index: true,
     },
+    fullName: {
+  type: String,
+  required: true,
+  trim: true,
+},
     email: {
       type: String,
       required: true,
@@ -38,8 +43,9 @@ const userSchema = new Schema(
     },
     avatarUrl: {
       type: String,
-      required: true,
+      required: false,
     },
+
     isPremium: {
       type: Boolean,
       default: false,
