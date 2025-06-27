@@ -1,14 +1,18 @@
 import React, { useState } from 'react';
 import { Mail, Lock, LogIn } from 'lucide-react';
 import Button from '../components/Button';
-import { Link, useNavigate } from 'react-router';
+import { Link, useNavigate } from 'react-router-dom';
 // import { toast } from 'react-toastify';
 
+import { useAuth } from '../context/AuthContext';
 
 function Login() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const { login } = useAuth(); 
   const navigate = useNavigate();
+  
+
 
   // const handleSubmit = (e) => {
     
@@ -50,6 +54,7 @@ const handleSubmit = async (e) => {
 
     if (response.ok) {
       console.log('✅ Login successful:', data);
+      login(); // Call login function from AuthContext
       navigate('/home'); // redirect after success
     } else {
       console.error('❌ Login failed:', data.message || 'Invalid credentials');
