@@ -20,9 +20,12 @@ const generateAccessAndRefereshTokens = async (userId) => {
     await user.save({ validateBeforeSave: false });
 
     return { accessToken, refreshToken };
-  } catch {
-    throw new ApiError(500, "something went wrong while generating tokens");
-  }
+  // } catch {
+  //   throw new ApiError(500, "something went wrong while generating tokens");
+  // }
+  }catch (err) {
+  throw new ApiError(500, "Failed to generate access and refresh tokens");
+}
 };
 
 const registerUser = asyncHandler(async (req, res) => {
@@ -95,6 +98,7 @@ const loginUser = asyncHandler(async (req, res) => {
   const options = {
     httpOnly: true,
     secure: true,
+    sameSite: 'none'
   };
 
   return res

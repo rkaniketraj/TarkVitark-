@@ -15,4 +15,10 @@ router.use('/discussions', discussionRouter);
 router.use('/users', userRouter);
 router.use('/payments', paymentRouter);
 
+// Health check route
+// router.get("/health", (req, res) => {
+//   res.status(200).json({ status: "ok" });
+// });
+
+
 export default router;

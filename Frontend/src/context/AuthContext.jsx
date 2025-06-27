@@ -4,22 +4,33 @@ const AuthContext = createContext();
 
 export const AuthProvider = ({ children }) => {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [loading, setLoading] = useState(true);
 
-  // Check if user is logged in (cookie-based for simplicity)
   useEffect(() => {
-    const hasToken = document.cookie.includes('accessToken');
-    setIsLoggedIn(hasToken);
+    const checkLogin = async () => {
+      try {
+        const response = await fetch(`${import.meta.env.VITE_API_BASE_URL}/api/v1/users/current`, {
+          credentials: 'include',
+        });
+        setIsLoggedIn(response.ok);
+      } catch (err) {
+        setIsLoggedIn(false);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    checkLogin();
   }, []);
 
   const login = () => setIsLoggedIn(true);
   const logout = () => setIsLoggedIn(false);
 
   return (
-    <AuthContext.Provider value={{ isLoggedIn, login, logout }}>
+    <AuthContext.Provider value={{ isLoggedIn, login, logout, loading }}>
       {children}
     </AuthContext.Provider>
   );
 };
 
-// Custom hook
 export const useAuth = () => useContext(AuthContext);

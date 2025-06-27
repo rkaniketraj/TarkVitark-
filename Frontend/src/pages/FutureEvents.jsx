@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { User2, Calendar, Clock } from 'lucide-react';
+import { User2, Calendar, Clock, PlusCircle } from 'lucide-react';
 import Modal from 'react-modal';
 import { format } from 'date-fns';
 import Navbar from '../components/Navbar';
@@ -19,6 +19,15 @@ function FutureEvents() {
   const [registeredDiscussions, setRegisteredDiscussions] = useState(new Set());
   const [discussions, setDiscussions] = useState([]);
   const [loading, setLoading] = useState(true);
+
+  // Host Debate Modal State
+  const [hostModalOpen, setHostModalOpen] = useState(false);
+  const [hostForm, setHostForm] = useState({
+    topic: '',
+    description: '',
+    date: '',
+    time: ''
+  });
 
   useEffect(() => {
     const fetchDiscussions = async () => {
@@ -42,7 +51,7 @@ function FutureEvents() {
 
   const handleRegistration = async (e) => {
     e.preventDefault();
-    
+
     if (!registrationData.stance || !registrationData.agreedToRules) {
       alert('Please fill in all required fields and agree to the rules.');
       return;
@@ -50,21 +59,73 @@ function FutureEvents() {
 
     try {
       const response = await debateService.registerForDebate(
-        selectedDiscussion.id,
+        selectedDiscussion.id || selectedDiscussion._id,
         registrationData.stance,
         registrationData.agreedToRules
       );
 
-      // Update UI to show registered state
       setRegisteredDiscussions(prev => new Set([...prev, selectedDiscussion.id]));
       setModalIsOpen(false);
       setRegistrationData({ stance: '', agreedToRules: false });
 
-      // Show success message
       alert('Successfully registered for the debate!');
     } catch (error) {
-      // Show error message
       alert(error.response?.data?.message || 'Failed to register for debate');
+    }
+  };
+
+  const handleUnregister = async (debateId) => {
+    try {
+      await debateService.unregisterFromDebate(debateId);
+      setRegisteredDiscussions(prev => {
+        const updated = new Set(prev);
+        updated.delete(debateId); // remove from registered set
+        return updated;
+      });
+      alert("You have been unregistered from the debate.");
+    } catch (error) {
+      alert(error.response?.data?.message || 'Failed to unregister');
+    }
+  };
+
+  // Host Debate Handlers
+  const openHostModal = () => setHostModalOpen(true);
+  const closeHostModal = () => setHostModalOpen(false);
+
+  const handleHostInputChange = (e) => {
+    const { name, value } = e.target;
+    setHostForm((prev) => ({ ...prev, [name]: value }));
+  };
+
+  const handleHostSubmit = async (e) => {
+    e.preventDefault();
+    if (!hostForm.topic || !hostForm.description || !hostForm.date || !hostForm.time) {
+      alert('Please fill in all fields.');
+      return;
+    }
+    // Combine date and time into ISO string
+    const start_time = new Date(`${hostForm.date}T${hostForm.time}`);
+    // future events only
+    if (start_time < new Date()) {
+    alert('Scheduled time must be in the future.');
+    return;
+  }
+    try {
+      // Host the debate and get the response (assuming the backend returns the created debate)
+      const newDebate = await debateService.hostDebate({
+  title: hostForm.topic,
+  description: hostForm.description,
+  scheduledAt: start_time.toISOString(),
+});
+      alert('Debate hosted successfully!');
+      setHostModalOpen(false);
+      setHostForm({ topic: '', description: '', date: '', time: '' });
+
+      // Add the new debate to the top of the discussions list
+      setDiscussions(prev => [newDebate, ...prev]);
+      // Optionally, setLoading(false); if you use loading state here
+    } catch (error) {
+      alert(error.response?.data?.message || 'Failed to host debate');
     }
   };
 
@@ -95,40 +156,73 @@ function FutureEvents() {
           {/* Main content - Between sidebars */}
           <div className="flex-1 ml-64 p-8 min-h-screen">
             <div className="max-w-7xl mx-auto">
-              <h1 className="text-2xl font-bold text-gray-800 mb-8">Upcoming Discussions</h1>
-              
+              <div className="flex justify-between items-center mb-8">
+                <h1 className="text-2xl font-bold text-gray-800">Upcoming Discussions</h1>
+                <button
+                  onClick={openHostModal}
+                  className="flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-lg shadow hover:bg-blue-700 transition"
+                >
+                  <PlusCircle className="w-5 h-5" />
+                  Host a Debate
+                </button>
+              </div>
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                {discussions.map(discussion => (
-                  <div 
-                    key={discussion.id}
-                    className="bg-white rounded-lg shadow-md p-6 border border-gray-100"
-                  >
-                    <h3 className="text-lg font-medium text-gray-900">{discussion.title}</h3>
-                    <p className="text-gray-600 mt-2">{discussion.description}</p>
-                    <div className="flex items-center mt-4 space-x-3 text-sm text-gray-500">
-                      <Calendar className="h-4 w-4" />
-                      <span>{format(new Date(discussion.start_time), 'MMM dd, yyyy')}</span>
+                {discussions.map(discussion => {
+  // Use scheduledAt for the event time
+  const isPast = new Date(discussion.scheduledAt) <= new Date();
+  return (
+    <div
+      key={discussion.id || discussion._id}
+      className="bg-white rounded-lg shadow-md p-6 border border-gray-100"
+    >
+      <h3 className="text-lg font-medium text-gray-900">{discussion.title}</h3>
+      <p className="text-gray-600 mt-2">{discussion.description}</p>
+      <div className="flex items-center mt-4 space-x-3 text-sm text-gray-500">
+        <Calendar className="h-4 w-4" />
+        {/* {discussion.start_time && !isNaN(new Date(discussion.start_time)) ? (
+                        <span>{format(new Date(discussion.start_time), 'MMM dd, yyyy')}</span>
+                      ) : (
+                        <span>Invalid date</span>
+                      )} */}
+                      {discussion.scheduledAt && !isNaN(new Date(discussion.scheduledAt)) ? (
+                    <span>{format(new Date(discussion.scheduledAt), 'MMM dd, yyyy')}</span>
+                    ) : (
+                  <span>Invalid date</span>
+                      )}
+
                       <Clock className="h-4 w-4 ml-2" />
-                      <span>{format(new Date(discussion.start_time), 'hh:mm a')}</span>
+                      {discussion.scheduledAt && !isNaN(new Date(discussion.scheduledAt)) ? (
+                        <span>{format(new Date(discussion.scheduledAt), 'hh:mm a')}</span>
+                      ) : (
+                        <span>Invalid time</span>
+                      )}
                     </div>
                     <div className="flex items-center justify-between mt-4">
                       <div className="flex items-center space-x-2">
                         <User2 className="h-5 w-5 text-gray-400" />
-                        <span className="text-sm text-gray-600">{discussion.moderator}</span>
+                        <span className="text-sm text-gray-600">{discussion.host.username}</span>
                       </div>
-                      {registeredDiscussions.has(discussion.id) ? (
-                        <span className="text-sm px-3 py-1 bg-gray-200 rounded-full">Registered</span>
-                      ) : (
-                        <button
-                          onClick={() => openRegistrationModal(discussion)}
-                          className="text-sm px-3 py-1 bg-green-100 text-green-700 rounded-full hover:bg-green-200"
-                        >
-                          Register
-                        </button>
+                      {!isPast && (
+                        registeredDiscussions.has(discussion.id || discussion._id) ? (
+                          <button
+                            onClick={() => handleUnregister(discussion.id || discussion._id)}
+                            className="text-sm px-3 py-1 bg-gray-300 text-gray-700 rounded-full hover:bg-gray-400"
+                          >
+                            Unregister
+                          </button>
+                        ) : (
+                          <button
+                            onClick={() => openRegistrationModal(discussion)}
+                            className="text-sm px-3 py-1 bg-green-100 text-green-700 rounded-full hover:bg-green-200"
+                          >
+                            Register
+                          </button>
+                        )
                       )}
                     </div>
                   </div>
-                ))}
+                );
+})}
               </div>
             </div>
           </div>
@@ -142,7 +236,7 @@ function FutureEvents() {
         </div>
       </div>
 
-      {/* Modal */}
+      {/* Register Modal */}
       <Modal
         isOpen={modalIsOpen}
         onRequestClose={() => setModalIsOpen(false)}
@@ -213,8 +307,87 @@ function FutureEvents() {
           </div>
         </div>
       </Modal>
+
+      {/* Host Debate Modal */}
+      <Modal
+        isOpen={hostModalOpen}
+        onRequestClose={closeHostModal}
+        className="relative max-w-lg mx-auto mt-20"
+        overlayClassName="fixed inset-0 bg-black/30 backdrop-blur-sm flex items-center justify-center"
+      >
+        <div className="bg-gradient-to-br from-blue-600 to-violet-600 p-[8px] rounded-xl">
+          <div className="bg-white rounded-xl p-6 space-y-6">
+            <h2 className="text-2xl font-bold text-gray-800 mb-4">Host a Debate</h2>
+            <form onSubmit={handleHostSubmit} className="space-y-4">
+              <div>
+                <label className="block text-sm font-medium mb-1">Debate Topic</label>
+                <input
+                  type="text"
+                  name="topic"
+                  value={hostForm.topic}
+                  onChange={handleHostInputChange}
+                  className="w-full border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-blue-500 outline-none"
+                  placeholder="Enter debate topic"
+                  required
+                />
+              </div>
+              <div>
+                <label className="block text-sm font-medium mb-1">Description</label>
+                <textarea
+                  name="description"
+                  value={hostForm.description}
+                  onChange={handleHostInputChange}
+                  className="w-full border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-blue-500 outline-none"
+                  placeholder="Describe the debate"
+                  required
+                />
+              </div>
+              <div className="flex gap-4">
+                <div className="flex-1">
+                  <label className="block text-sm font-medium mb-1">Date</label>
+                  <input
+                    type="date"
+                    name="date"
+                    value={hostForm.date}
+                    onChange={handleHostInputChange}
+                    className="w-full border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-blue-500 outline-none"
+                    required
+                  />
+                </div>
+                <div className="flex-1">
+                  <label className="block text-sm font-medium mb-1">Time</label>
+                  <input
+                    type="time"
+                    name="time"
+                    value={hostForm.time}
+                    onChange={handleHostInputChange}
+                    className="w-full border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-blue-500 outline-none"
+                    required
+                  />
+                </div>
+              </div>
+              <div className="flex justify-end space-x-3 pt-4">
+                <button
+                  type="button"
+                  onClick={closeHostModal}
+                  className="px-4 py-2 text-gray-600 hover:text-gray-800"
+                >
+                  Cancel
+                </button>
+                <button
+                  type="submit"
+                  className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700"
+                >
+                  Host Debate
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      </Modal>
     </div>
   );
 }
+
 
 export default FutureEvents;
