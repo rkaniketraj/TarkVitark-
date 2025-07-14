@@ -30,7 +30,7 @@ export const LanguageProvider = ({ children }) => {
     const cacheKey = `translation_${targetLang}_${text}`;
     const cached = localStorage.getItem(cacheKey);
     if (cached) return cached;
-
+// if it is presentend in the cache it return directly which make it faster
     try {
       // Use Google Translate API
       const response = await fetch(

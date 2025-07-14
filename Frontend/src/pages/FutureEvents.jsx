@@ -6,10 +6,12 @@ import Navbar from '../components/Navbar';
 import LeftSideBar from '../components/LeftSideBar';
 import Footer from '../components/Footer';
 import debateService from '../services/debateService';
+import userService from '../services/userService';
 
 Modal.setAppElement('#root');
 
 function FutureEvents() {
+  const [currentUser, setCurrentUser] = useState(null);
   const [modalIsOpen, setModalIsOpen] = useState(false);
   const [selectedDiscussion, setSelectedDiscussion] = useState(null);
   const [registrationData, setRegistrationData] = useState({
@@ -30,18 +32,21 @@ function FutureEvents() {
   });
 
   useEffect(() => {
-    const fetchDiscussions = async () => {
+    const fetchInitialData = async () => {
       try {
-        const upcomingDebates = await debateService.getUpcomingDebates();
+        const [upcomingDebates, user] = await Promise.all([
+          debateService.getUpcomingDebates(),
+          userService.getCurrentUser()
+        ]);
         setDiscussions(upcomingDebates);
+        setCurrentUser(user);
       } catch (error) {
-        console.error('Failed to fetch upcoming debates:', error);
+        console.error('Failed to fetch data:', error);
       } finally {
         setLoading(false);
       }
     };
-
-    fetchDiscussions();
+    fetchInitialData();
   }, []);
 
   const openRegistrationModal = (discussion) => {
@@ -103,29 +108,31 @@ function FutureEvents() {
       alert('Please fill in all fields.');
       return;
     }
+    if (!currentUser || !currentUser._id) {
+      alert('User info not loaded. Please log in again.');
+      return;
+    }
     // Combine date and time into ISO string
     const start_time = new Date(`${hostForm.date}T${hostForm.time}`);
-    // future events only
     if (start_time < new Date()) {
-    alert('Scheduled time must be in the future.');
-    return;
-  }
+      alert('Scheduled time must be in the future.');
+      return;
+    }
     try {
-      // Host the debate and get the response (assuming the backend returns the created debate)
-      const newDebate = await debateService.hostDebate({
-  title: hostForm.topic,
-  description: hostForm.description,
-  scheduledAt: start_time.toISOString(),
-});
-      alert('Debate hosted successfully!');
+      // Create the debate room with host as initial participant
+      const payload = {
+        name: hostForm.topic,
+        description: hostForm.description,
+        scheduledAt: start_time.toISOString(),
+        participants: [currentUser._id]
+      };
+      const response = await debateService.createDebateRoom(payload);
+      alert('Debate room created successfully!');
       setHostModalOpen(false);
       setHostForm({ topic: '', description: '', date: '', time: '' });
-
-      // Add the new debate to the top of the discussions list
-      setDiscussions(prev => [newDebate, ...prev]);
-      // Optionally, setLoading(false); if you use loading state here
+      setDiscussions(prev => [response, ...prev]);
     } catch (error) {
-      alert(error.response?.data?.message || 'Failed to host debate');
+      alert(error.response?.data?.message || 'Failed to create debate room');
     }
   };
 

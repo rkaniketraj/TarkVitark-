@@ -1,3 +1,4 @@
+
 import { Router } from 'express';
 import {
     getActiveDebates,
@@ -12,6 +13,7 @@ import {
     updateDebateStatus
 } from '../controllers/discussion.controller.js';
 import { verifyJWT } from '../middlewares/auth.middleware.js';
+import { createDebateRoom } from '../controllers/debateRoom.controller.js';
 
 const router = Router();
 
@@ -21,13 +23,8 @@ router.get('/upcoming', getUpcomingDebates);
 router.get('/:id', getDebateDetails);
 
 // Protected routes
-router.use(verifyJWT);
-router.post('/register', registerForDebate);
-router.post('/create', createDebate);
-router.get('/hosted', getHostedDebates);
-router.get('/participated', getParticipatedDebates);
-router.post('/:id/join', joinDebate);
-router.post('/:id/leave', leaveDebate);
-router.patch('/:id/status', updateDebateStatus);
+
+// Debate Room creation (protected)
+router.post('/debate-room', createDebateRoom);
 
 export default router;

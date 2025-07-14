@@ -76,10 +76,12 @@ const debateService = {
     return response.data.data;
   },
 
-  hostDebate: async (debateData) => {
-  const response = await api.post('/debates/create', debateData);
-  return response.data.data;
-},
+
+  // Create a debate room (new endpoint)
+  createDebateRoom: async (roomData) => {
+    const response = await api.post('/debates/debate-room', roomData);
+    return response.data;
+  },
 
   // Get list of upcoming debates
   getUpcomingDebates: async () => {
@@ -100,7 +102,7 @@ const debateService = {
 
   // Register for a debate
   registerForDebate: async (debateId, stance, agreedToRules) => {
-    const response = await api.post('/debates/register', {
+    const response = await api.post('/discussions/register', {
       debateId,
       stance,
       agreedToRules
