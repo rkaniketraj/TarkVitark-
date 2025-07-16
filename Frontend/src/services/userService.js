@@ -1,6 +1,11 @@
 import api from '../lib/axios';
 
 const userService = {
+  // Get user's stance for a debate room
+  getDebateStance: async (roomId) => {
+    const response = await api.get(`/discussions/${roomId}/registration`);
+    return response.data.stance;
+  },
   // Login user
   login: async (email, password) => {
     const response = await api.post('/users/login', {

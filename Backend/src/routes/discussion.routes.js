@@ -37,7 +37,24 @@ router.post('/:id/join', joinDebate);
 router.post('/:id/leave', leaveDebate);
 router.post('/:id/vote', voteOnDebate);
 
-// Debate messages routes
+// Get current user's registration for a debate room
+router.get('/:id/registration', verifyJWT, async (req, res) => {
+  // :id is debate room id
+  const debateId = req.params.id;
+  const userId = req.user._id;
+  try {
+    const registration = await (await import('../models/debateRegistration.model.js')).default.findOne({
+      debate: debateId,
+      'participant.user': userId
+    });
+    if (!registration) {
+      return res.status(404).json({ message: 'Not registered for this debate' });
+    }
+    res.json({ stance: registration.participant.stance });
+  } catch (err) {
+    res.status(500).json({ message: 'Failed to fetch registration', error: err.message });
+  }
+});
 router.get('/:id/messages', getDebateMessages);
 router.post('/:id/messages', sendMessage);
 

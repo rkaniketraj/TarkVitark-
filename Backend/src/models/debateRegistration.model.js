@@ -67,6 +67,6 @@ debateRegistrationSchema.pre("save", async function(next) {
   next();
 });
 
-const DebateRegistration = mongoose.model("DebateRegistration", debateRegistrationSchema);
+const Debate = mongoose.model("DebateRegistration", debateRegistrationSchema);
 
-export default DebateRegistration;
+export default Debate;

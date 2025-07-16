@@ -43,7 +43,7 @@
 import { asyncHandler } from "../utils/asyncHandler.js";
 import { ApiError } from "../utils/ApiError.js";
 import { ApiResponse } from "../utils/ApiResponse.js";
-import { Debate } from "../models/debate.model.js"; // Make sure this exists
+import  Debate  from "../models/debateRegistration.model.js"; // Make sure this exists
 
 // Create a new debate
 const createDebate = asyncHandler(async (req, res) => {

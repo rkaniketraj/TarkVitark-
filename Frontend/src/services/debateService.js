@@ -100,9 +100,10 @@ const debateService = {
   return response.data;
 },
 
-  // Register for a debate
+  // Register for a debate (used by both ActiveDiscussion and FutureEvents)
   registerForDebate: async (debateId, stance, agreedToRules) => {
-    const response = await api.post('/discussions/register', {
+    // Backend expects: debateId, stance, agreedToRules
+    const response = await api.post('/debates/register', {
       debateId,
       stance,
       agreedToRules

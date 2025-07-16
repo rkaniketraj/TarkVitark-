@@ -7,6 +7,7 @@ import LeftSideBar from '../components/LeftSideBar';
 import Footer from '../components/Footer';
 import debateService from '../services/debateService';
 import userService from '../services/userService';
+import RegisterForDebateButton from '../components/RegisterForDebateButton';
 
 Modal.setAppElement('#root');
 
@@ -218,12 +219,16 @@ function FutureEvents() {
                             Unregister
                           </button>
                         ) : (
-                          <button
-                            onClick={() => openRegistrationModal(discussion)}
-                            className="text-sm px-3 py-1 bg-green-100 text-green-700 rounded-full hover:bg-green-200"
-                          >
-                            Register
-                          </button>
+                          <RegisterForDebateButton
+                            debate={discussion}
+                            isRegistered={false}
+                            registerForDebate={async (debateId, stance, agreedToRules) => {
+                              await debateService.registerForDebate(debateId, stance, agreedToRules);
+                              setRegisteredDiscussions(prev => new Set([...prev, discussion.id || discussion._id]));
+                            }}
+                            buttonClass="text-sm px-3 py-1 bg-green-100 text-green-700 rounded-full hover:bg-green-200"
+                            buttonText="Register"
+                          />
                         )
                       )}
                     </div>
@@ -243,77 +248,7 @@ function FutureEvents() {
         </div>
       </div>
 
-      {/* Register Modal */}
-      <Modal
-        isOpen={modalIsOpen}
-        onRequestClose={() => setModalIsOpen(false)}
-        className="relative max-w-lg mx-auto mt-20"
-        overlayClassName="fixed inset-0 bg-black/30 backdrop-blur-sm flex items-center justify-center"
-      >
-        <div className="bg-gradient-to-br from-blue-600 to-violet-600 p-[8px] rounded-xl">
-          <div className="bg-white rounded-xl p-6 space-y-6">
-            <h2 className="text-2xl font-bold text-gray-800">Register for Discussion</h2>
-            <h3 className="text-lg font-medium">{selectedDiscussion?.title}</h3>
-            <form onSubmit={handleRegistration} className="space-y-4">
-              <div>
-                <label className="block text-sm font-medium mb-2">Choose your stance:</label>
-                <label className="inline-flex items-center mr-4">
-                  <input
-                    type="radio"
-                    name="stance"
-                    value="in_favor"
-                    onChange={(e) =>
-                      setRegistrationData({ ...registrationData, stance: e.target.value })
-                    }
-                    className="form-radio text-blue-600"
-                  />
-                  <span className="ml-2">In Favor</span>
-                </label>
-                <label className="inline-flex items-center">
-                  <input
-                    type="radio"
-                    name="stance"
-                    value="against"
-                    onChange={(e) =>
-                      setRegistrationData({ ...registrationData, stance: e.target.value })
-                    }
-                    className="form-radio text-blue-600"
-                  />
-                  <span className="ml-2">Against</span>
-                </label>
-              </div>
-              <label className="inline-flex items-center">
-                <input
-                  type="checkbox"
-                  checked={registrationData.agreedToRules}
-                  onChange={(e) =>
-                    setRegistrationData({ ...registrationData, agreedToRules: e.target.checked })
-                  }
-                  className="form-checkbox text-blue-600"
-                />
-                <span className="ml-2 text-sm text-gray-600">
-                  I agree to follow the discussion rules
-                </span>
-              </label>
-              <div className="flex justify-end space-x-3 pt-4">
-                <button
-                  type="button"
-                  onClick={() => setModalIsOpen(false)}
-                  className="px-4 py-2 text-gray-600 hover:text-gray-800"
-                >
-                  Cancel
-                </button>
-                <button
-                  type="submit"
-                  className="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700"
-                >
-                  Register
-                </button>
-              </div>
-            </form>
-          </div>
-        </div>
-      </Modal>
+      {/* Register Modal removed, handled by RegisterForDebateButton */}
 
       {/* Host Debate Modal */}
       <Modal

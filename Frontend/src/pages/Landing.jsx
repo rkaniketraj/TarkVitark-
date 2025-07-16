@@ -27,9 +27,9 @@ function Landing() {
             <h1 className="text-4xl md:text-6xl font-bold mb-6">
              <TypingAnimation>Debate the World. Understand Everyone.</TypingAnimation> 
             </h1>
-            <p className="text-xl md:text-2xl mb-8 text-blue-100">
-          <TypingAnimation>Join global discussions in real time, no language barriers.</TypingAnimation>    
-            </p>
+            <span className="text-xl md:text-2xl mb-8 text-blue-100 block">
+              <TypingAnimation>Join global discussions in real time, no language barriers.</TypingAnimation>
+            </span>
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
             <Link to="/login">
               <button className="bg-green-500 hover:bg-green-600 text-white px-8 py-4 rounded-lg font-semibold text-lg transition-colors flex items-center justify-center gap-2">
