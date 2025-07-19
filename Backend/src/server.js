@@ -1,8 +1,10 @@
+
 import dotenv from "dotenv";
 import connectDB from "./db/index.js";
 import { app } from './app.js';
-//import DebateRoom from './models/debateRoom.model.js'; // Adjust the path as necessary
 import { DebateRoom } from './models/debateRoom.model.js';
+import { initializeSocket } from './socket.js';
+import http from 'http';
 
 dotenv.config({
     path: './.env'
@@ -15,8 +17,11 @@ connectDB()
         throw error;
     });
 
-    app.listen(process.env.PORT || 8000, () => {
-        console.log(` Server is running at port: ${process.env.PORT}`);
+    const server = http.createServer(app);
+    initializeSocket(server);
+    const PORT = process.env.PORT || 8000;
+    server.listen(PORT, () => {
+        console.log(`Server is running at port: ${PORT}`);
     });
 
     // Periodically update debate statuses

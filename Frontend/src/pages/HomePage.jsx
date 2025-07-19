@@ -3,14 +3,34 @@ import Navbar from '../components/Navbar';
 import NotificationBar from '../components/Notification';
 import UpcomingDebates from '../components/UpcomingDebates';
 import ActiveDebates from '../components/ActiveDebates';
+import { useEffect, useState } from 'react';
+import debateService from '../services/debateService';
 import Footer from '../components/Footer';
 import LeftSideBar from '../components/LeftSideBar';
 import { Link,useNavigate } from 'react-router';
 
 function HomePage() {
-  const navigate = useNavigate(); 
-  const handleNavigate = (path) => {
-    navigate(path);
+  const navigate = useNavigate();
+  const [activeDebates, setActiveDebates] = useState([]);
+
+  useEffect(() => {
+    const fetchActiveDebates = async () => {
+      try {
+        const data = await debateService.getActiveDebates();
+        setActiveDebates(data);
+      } catch (err) {
+        setActiveDebates([]);
+      }
+    };
+    fetchActiveDebates();
+  }, []);
+
+  const handleNavigate = () => {
+    if (activeDebates.length > 0) {
+      navigate(`/active/${activeDebates[0]._id}`);
+    } else {
+      alert('No active debates available');
+    }
   };
 
   return (
@@ -37,7 +57,7 @@ function HomePage() {
               </h1>
               <div className="flex flex-col w-full space-y-8">
                 <UpcomingDebates />
-                <ActiveDebates onClick={()=>handleNavigate('/active')} />
+                <ActiveDebates onClick={handleNavigate} />
               </div>
             </div>
           </div>

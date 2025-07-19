@@ -120,12 +120,16 @@ function FutureEvents() {
       return;
     }
     try {
-      // Create the debate room with host as initial participant
+      // Create the debate room with all required fields
       const payload = {
-        name: hostForm.topic,
+        title: hostForm.topic,
         description: hostForm.description,
         scheduledAt: start_time.toISOString(),
-        participants: [currentUser._id]
+        duration: 60, // You can add a duration field to the form if needed
+        host: currentUser._id,
+        participants: [{ user: currentUser._id, stance: "neutral" }],
+        category: "technology", // You can add a category field to the form if needed
+        language: "en" // You can add a language selector if needed
       };
       const response = await debateService.createDebateRoom(payload);
       alert('Debate room created successfully!');
