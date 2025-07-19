@@ -102,7 +102,10 @@ const debateService = {
 
   // Register for a debate (used by both ActiveDiscussion and FutureEvents)
   registerForDebate: async (debateId, stance, agreedToRules) => {
-    // Backend expects: debateId, stance, agreedToRules
+    if (!debateId) throw new Error('Debate ID is required');
+    if (!stance) throw new Error('Stance is required');
+    if (!agreedToRules) throw new Error('You must agree to the rules');
+    
     const response = await api.post('/debates/register', {
       debateId,
       stance,

@@ -1,4 +1,3 @@
-
 export default ActiveDiscussion;
 
 import React, { useState, useEffect } from 'react';
@@ -8,19 +7,15 @@ import Navbar from '../components/Navbar';
 import LeftSideBar from '../components/LeftSideBar';
 import Footer from '../components/Footer';
 import Box from '../components/ActiveBox';
-import RegisterForDebateButton from '../components/RegisterForDebateButton';
 import debateService from '../services/debateService';
 import userService from '../services/userService';
-
 
 function ActiveDiscussion() {
   const navigate = useNavigate();
   const [activeDebates, setActiveDebates] = useState([]);
   const [loading, setLoading] = useState(true);
   const [user, setUser] = useState(null);
-  // No need for modal/registering state here, handled by RegisterForDebateButton
 
-  // Fetch current user
   useEffect(() => {
     const fetchUser = async () => {
       try {
@@ -33,7 +28,6 @@ function ActiveDiscussion() {
     fetchUser();
   }, []);
 
-  // Fetch debates
   useEffect(() => {
     const fetchActiveDebates = async () => {
       try {
@@ -52,29 +46,19 @@ function ActiveDiscussion() {
   }, []);
 
   const handleBoxClick = (debate) => {
+  try {
     navigate('/discuss', {
       state: {
+        roomId: debate._id, // Pass debate id for DiscussionPage
         title: debate.title,
         description: debate.description,
         author: debate.host?.username || 'Unknown',
       },
     });
-  };
-
-  // Check if user is registered for a debate
-  const isRegistered = (debate) => {
-    if (!user) return false;
-    return debate.participants?.some((p) => p._id === user._id);
-  };
-
-  // Open registration modal
-  const openRegistrationModal = (debate) => {
-    setSelectedDebate(debate);
-    setModalIsOpen(true);
-    setRegistrationData({ stance: '', agreedToRules: false });
-  };
-
-  // Registration handled by RegisterForDebateButton
+  } catch (error) {
+    console.error('Navigation error:', error);
+  }
+};
 
   return (
     <div className="flex flex-col min-h-screen">
@@ -96,7 +80,6 @@ function ActiveDiscussion() {
             <div className="max-w-7xl mx-auto">
               <div className="flex justify-between items-center mb-8">
                 <h1 className="text-2xl font-bold text-gray-800">Active Discussions</h1>
-                {/* Optional Add Button */}
                 <button
                   onClick={() => {}}
                   disabled
@@ -113,33 +96,18 @@ function ActiveDiscussion() {
               ) : activeDebates.length === 0 ? (
                 <div className="text-center text-gray-500">No active debates right now.</div>
               ) : (
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                  {activeDebates.map((debate) => {
-                    const registered = isRegistered(debate);
-                    return (
-                      <div key={debate._id} className="relative border rounded-lg shadow p-4 bg-white flex flex-col gap-2">
-                        <Box
-                          title={debate.title}
-                          description={debate.description}
-                          author={debate.host?.username || 'Unknown'}
-                          onClick={() => handleBoxClick(debate)}
-                        />
-                        {user && (
-                          <div className="mt-2">
-                            <RegisterForDebateButton
-                              debate={debate}
-                              isRegistered={registered}
-                              registerForDebate={debateService.registerForDebate}
-                              onRegisterSuccess={async () => {
-                                const data = await debateService.getActiveDebates();
-                                setActiveDebates(data);
-                              }}
-                            />
-                          </div>
-                        )}
-                      </div>
-                    );
-                  })}
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-1">
+                  {activeDebates.map((debate) => (
+                    <div key={debate._id} className="relative rounded-lg p-4 bg-white flex flex-col gap-2"
+>
+                      <Box
+                        title={debate.title}
+                        description={debate.description}
+                        author={debate.host?.username || 'Unknown'}
+                        onClick={() => handleBoxClick(debate)}
+                      />
+                    </div>
+                  ))}
                 </div>
               )}
             </div>
@@ -154,9 +122,5 @@ function ActiveDiscussion() {
         </div>
       </div>
     </div>
-
   );
 }
-
-
-

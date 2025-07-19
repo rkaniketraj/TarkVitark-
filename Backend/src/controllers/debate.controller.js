@@ -43,7 +43,8 @@
 import { asyncHandler } from "../utils/asyncHandler.js";
 import { ApiError } from "../utils/ApiError.js";
 import { ApiResponse } from "../utils/ApiResponse.js";
-import  Debate  from "../models/debateRegistration.model.js"; // Make sure this exists
+import { DebateRoom } from "../models/debateRoom.model.js";
+import  DebateRegistration  from "../models/debateRegistration.model.js";
 
 // Create a new debate
 const createDebate = asyncHandler(async (req, res) => {
@@ -53,11 +54,12 @@ const createDebate = asyncHandler(async (req, res) => {
     throw new ApiError(400, "All fields are required");
   }
 
-  const debate = await Debate.create({
+  const debate = await DebateRoom.create({
     title,
     description,
     start_time,
-    moderator: req.user._id, // assuming you're storing user in req.user from auth middleware
+    moderator: req.user._id,
+    participants: []
   });
 
   return res.status(201).json(new ApiResponse(201, debate, "Debate created successfully"));
@@ -66,25 +68,51 @@ const createDebate = asyncHandler(async (req, res) => {
 // Get upcoming debates
 const getUpcomingDebates = asyncHandler(async (req, res) => {
   const now = new Date();
-  const debates = await Debate.find({ start_time: { $gte: now } }).sort({ start_time: 1 });
+  const debates = await DebateRoom.find({ start_time: { $gte: now } })
+    .sort({ start_time: 1 });
   return res.status(200).json(new ApiResponse(200, debates, "Upcoming debates fetched"));
 });
 
 // Register for a debate
 const registerForDebate = asyncHandler(async (req, res) => {
   const { debateId, stance, agreedToRules } = req.body;
+  const userId = req.user._id;
 
-  if (!debateId || !stance || !agreedToRules) {
-    throw new ApiError(400, "All registration fields are required");
+  if (!debateId || !stance || agreedToRules !== true) {
+    throw new ApiError(400, "Missing required fields or rules not agreed to");
   }
 
-  const debate = await Debate.findById(debateId);
-  if (!debate) throw new ApiError(404, "Debate not found");
+  // Check if debate exists
+  const debate = await DebateRoom.findById(debateId);
+  if (!debate) {
+    throw new ApiError(404, "Debate not found");
+  }
 
-  debate.participants.push({ user: req.user._id, stance });
+  // Check if user is already registered
+  const existingRegistration = await DebateRegistration.findOne({
+    debate: debateId,
+    user: userId
+  });
+
+  if (existingRegistration) {
+    throw new ApiError(400, "You are already registered for this debate");
+  }
+
+  // Create registration and update debate participants
+  const registration = await DebateRegistration.create({
+    debate: debateId,
+    user: userId,
+    stance,
+    agreedToRules
+  });
+
+  // Update debate participants
+  debate.participants.push({ user: userId, stance });
   await debate.save();
 
-  return res.status(200).json(new ApiResponse(200, null, "Registered for debate successfully"));
+  return res.status(201).json(
+    new ApiResponse(201, registration, "Successfully registered for debate")
+  );
 });
 
 export {

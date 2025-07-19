@@ -40,8 +40,10 @@ function RegisterForDebateButton({
       setRegistrationData({ stance: '', agreedToRules: false });
       if (onRegisterSuccess) onRegisterSuccess();
       alert('Successfully registered for the debate!');
-    } catch (e) {
-      alert('Registration failed.');
+    } catch (error) {
+      console.error('Registration error:', error);
+      const errorMessage = error.response?.data?.message || 'Registration failed. Please try again.';
+      alert(errorMessage);
     } finally {
       setRegistering(false);
     }
