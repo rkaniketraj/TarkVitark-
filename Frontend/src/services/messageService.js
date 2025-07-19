@@ -1,19 +1,17 @@
 import api from '../lib/axios';
 
 const messageService = {
-
-
-  // Get messages for a debate (correct backend route)
-  getDebateMessages: async (debateId) => {
-    const response = await api.get(`/debates/messages/debate/${debateId}`);
+  // Get messages for a debate
+  getMessages: async (debateId) => {
+    const response = await api.get(`/messages/${debateId}`);
     return response.data.data;
   },
 
-
-  // Send a message (correct backend route)
+  // Send a message
   sendMessage: async (debateId, text, voiceUrl = null) => {
-    const response = await api.post(`/debates/messages/debate/${debateId}`, {
-      content: text,
+    const response = await api.post('/messages/send', {
+      debateId,
+      text,
       voiceUrl
     });
     return response.data;

@@ -1,58 +1,31 @@
-import React, { useEffect, useRef, useState } from 'react';
-import { useParams, useNavigate, useLocation } from 'react-router-dom';
+import React, { useState, useEffect, useRef } from 'react';
 import UpperHeader from '../components/UpperHeader';
 import ChatBody from '../components/ChatBody';
 import MessageInput from '../components/MessageInput';
 import Navbar from '../components/Navbar';
 import LeftSideBar from '../components/LeftSideBar';
-import { useDebate } from '../context/DebateContext';
-import { useAuth } from '../context/AuthContext';
+import { useLocation } from 'react-router-dom';
+import { io } from 'socket.io-client';
 import userService from '../services/userService';
 
-const SOCKET_URL = 'http://localhost:3001';
+
+
+
+const SOCKET_URL = 'http://localhost:3001'; // Change if needed
 
 function DiscussionPage() {
-  // URL and navigation
-  const { debateId } = useParams();
-  const navigate = useNavigate();
-  const location = useLocation();
-  
-  // Auth context
-  const { isLoggedIn } = useAuth();
-
-  // Debate context
-  const { 
-    currentDebate,
-    messages: contextMessages,
-    participants: contextParticipants,
-    typingUsers,
-    loading: contextLoading,
-    error: contextError,
-    joinDebate,
-    leaveDebate,
-    sendMessage: sendContextMessage,
-    startTyping,
-    stopTyping,
-    vote
-  } = useDebate();
-
-  // Local state
-  const [localMessages, setLocalMessages] = useState([]);
-  const [localParticipants, setLocalParticipants] = useState([]);
-  const [userInfo, setUserInfo] = useState(null);
-  const [isLoading, setIsLoading] = useState(true);
+  const [messages, setMessages] = useState([]);
+  const [participants, setParticipants] = useState([]);
+  const [currentUser, setCurrentUser] = useState(null);
+  const [loading, setLoading] = useState(true);
   const [socketError, setSocketError] = useState('');
   const socketRef = useRef(null);
 
-  // Room information from location state
+  const location = useLocation();
   const { roomId, title, description, author } = location.state || {};
 
   useEffect(() => {
-    if (!isLoggedIn) {
-      navigate('/login', { state: { from: `/discuss/${debateId}` } });
-      return;
-    }
-
+    // Fetch current user info and stance for this debate room
     const fetchUserAndStance = async () => {
       try {
         const user = await userService.getCurrentUser();
@@ -65,126 +38,100 @@ function DiscussionPage() {
             return;
           }
         }
-        setUserInfo({ ...user, stance });
+        setCurrentUser({ ...user, stance });
       } catch (err) {
         setSocketError('Failed to load user info');
       }
     };
-
     fetchUserAndStance();
-    joinDebate(debateId);
-
-    return () => {
-      leaveDebate();
-    };
-  }, [debateId, isLoggedIn]);
+  }, [roomId]);
 
   useEffect(() => {
-    if (!userInfo || !roomId) return;
+    if (!currentUser || !roomId) return;
 
-    setIsLoading(true);
+    setLoading(true);
     setSocketError('');
     socketRef.current = io(SOCKET_URL);
 
     socketRef.current.emit('joinRoom', {
       roomId,
-      userId: userInfo._id,
-      username: userInfo.fullName || userInfo.username,
-      stance: userInfo.stance,
+      userId: currentUser._id,
+      username: currentUser.fullName || currentUser.username,
+      stance: currentUser.stance, // You may need to fetch stance from registration
     });
 
     socketRef.current.on('roomUpdate', (data) => {
-      setLocalParticipants(data.participants);
+      setParticipants(data.participants);
     });
 
     socketRef.current.on('receiveMessage', (msg) => {
-      setLocalMessages((prev) => [...prev, msg]);
+      setMessages((prev) => [...prev, msg]);
     });
 
     socketRef.current.on('error', (err) => {
       setSocketError(err.message || 'Socket error');
     });
 
-    setIsLoading(false);
+    setLoading(false);
 
     return () => {
-      socketRef.current?.disconnect();
+      socketRef.current.disconnect();
     };
-  }, [userInfo, roomId]);
+  }, [currentUser, roomId]);
 
   const handleSendMessage = (text) => {
-    if (!text.trim() || !userInfo) return;
+    if (!text.trim() || !currentUser) return;
     const msgData = {
       roomId,
-      userId: userInfo._id,
-      username: userInfo.fullName || userInfo.username,
-      stance: userInfo.stance,
+      userId: currentUser._id,
+      username: currentUser.fullName || currentUser.username,
+      stance: currentUser.stance, // You may need to fetch stance from registration
       message: text,
       timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
     };
     socketRef.current.emit('sendMessage', msgData);
-    setLocalMessages((prev) => [
-      ...prev,
-      { 
-        user: { name: msgData.username, stance: msgData.stance },
-        text,
-        timestamp: msgData.timestamp
-      }
-    ]);
+    setMessages((prev) => [...prev, { user: { name: msgData.username, stance: msgData.stance }, text, timestamp: msgData.timestamp }]);
   };
 
-  if (contextLoading || isLoading) {
-    return (
-      <div className="flex items-center justify-center min-h-screen">
-        <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-blue-500" />
-      </div>
-    );
+  if (loading) {
+    return <div className="flex items-center justify-center min-h-screen">Loading...</div>;
   }
-
-  if (contextError || socketError) {
-    return (
-      <div className="flex items-center justify-center min-h-screen">
-        <div className="text-red-500 text-center">
-          <h2 className="text-2xl font-bold mb-2">Error</h2>
-          <p>{contextError || socketError}</p>
-        </div>
-      </div>
-    );
+  if (socketError) {
+    return <div className="flex items-center justify-center min-h-screen text-red-600">{socketError}</div>;
   }
-
-  if (!currentDebate) {
-    return null;
-  }
-
-  const displayMessages = localMessages.length > 0 ? localMessages : contextMessages;
-  const displayParticipants = localParticipants.length > 0 ? localParticipants : contextParticipants;
 
   return (
     <div className="flex flex-col min-h-screen">
+      {/* Navbar - Fixed at top */}
       <div className="fixed top-0 w-full z-50">
         <Navbar />
       </div>
       <div className="flex flex-row pt-16 flex-grow">
+        {/* Left Sidebar */}
         <div className="fixed left-0 top-16 bottom-0 w-64 overflow-y-auto bg-white border-r">
           <LeftSideBar />
         </div>
+        {/* Main Chat Area */}
         <div className="ml-64 flex flex-col flex-grow bg-gray-50 relative">
+          {/* Fixed Header in main area */}
           <div className="fixed left-64 right-0 top-16 bg-gray-50 z-40 shadow-md">
             <UpperHeader
-              title={title || currentDebate.title}
-              totalUsers={displayParticipants.length}
-              inFavorCount={displayParticipants.filter(p => p.stance === 'in-favor').length}
-              againstCount={displayParticipants.filter(p => p.stance === 'against').length}
-              hostName={author || currentDebate.author}
+              title={title}
+              totalUsers={participants.length}
+              inFavorCount={participants.filter(p => p.stance === 'in-favor').length}
+              againstCount={participants.filter(p => p.stance === 'against').length}
+              hostName={author}
               hostImage="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e"
             />
           </div>
+          {/* ChatBody - Scrollable */}
           <div className="flex-1 mt-32 mb-20 overflow-y-auto px-4">
             <ChatBody
-              messages={displayMessages}
-              currentUserStance={userInfo?.stance}
+              messages={messages}
+              currentUserStance={currentUser?.stance}
             />
           </div>
+          {/* Fixed Footer Input */}
           <div className="fixed left-64 right-0 bottom-0 bg-gray-50 z-40 shadow-inner px-4 py-2">
             <MessageInput onSendMessage={handleSendMessage} />
           </div>
@@ -195,3 +142,4 @@ function DiscussionPage() {
 }
 
 export default DiscussionPage;
+  

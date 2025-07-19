@@ -5,8 +5,7 @@ import { ApiResponse } from "../utils/ApiResponse.js";
 import mongoose from "mongoose";
 import { DebateRoom } from "../models/debateRoom.model.js";
 import { User } from "../models/user.model.js";
-import Message from "../models/message.model.js";
-// import { emitDebateUpdate, emitDebateMessage } from "../socket.js";
+import DebateRegistration from "../models/debateRegistration.model.js";
 
 // Get all active debates (status: 'active')
 const getActiveDebates = asyncHandler(async (req, res) => {

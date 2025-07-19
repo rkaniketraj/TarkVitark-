@@ -1,3 +1,4 @@
+
 import { Router } from 'express';
 import {
     getActiveDebates,
@@ -22,15 +23,10 @@ router.get('/upcoming', getUpcomingDebates);
 router.get('/:id', getDebateDetails);
 
 // Protected routes
-router.post('/create', verifyJWT, createDebate);
-router.get('/hosted', verifyJWT, getHostedDebates);
-router.get('/participated', verifyJWT, getParticipatedDebates);
-router.post('/join', verifyJWT, joinDebate);
-router.post('/leave', verifyJWT, leaveDebate);
-router.patch('/update-status', verifyJWT, updateDebateStatus);
+
 
 // Debate Room creation (protected)
-router.post('/debate-room', verifyJWT, createDebateRoom);
+router.post('/debate-room', createDebateRoom);
 
 // Register for a debate (protected)
 router.post('/register', verifyJWT, registerForDebate);

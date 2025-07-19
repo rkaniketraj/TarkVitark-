@@ -1,26 +1,14 @@
-import React, { useState, useRef } from 'react';
+import React, { useState } from 'react';
 import { Send, Mic, X } from 'lucide-react';
-import PropTypes from 'prop-types';
 
-export default function MessageInput({ onSendMessage, disabled = false }) {
+export default function MessageInput({ onSendMessage }) {
   const [message, setMessage] = useState('');
   const [isRecording, setIsRecording] = useState(false);
-  const [isLoading, setIsLoading] = useState(false);
-  const inputRef = useRef(null);
   
-  const handleSendMessage = async () => {
-    const trimmedMessage = message.trim();
-    if (!trimmedMessage || disabled || isLoading) return;
-
-    try {
-      setIsLoading(true);
-      await onSendMessage(trimmedMessage);
+  const handleSendMessage = () => {
+    if (message.trim()) {
+      onSendMessage(message);
       setMessage('');
-      inputRef.current?.focus();
-    } catch (error) {
-      console.error('Failed to send message:', error);
-    } finally {
-      setIsLoading(false);
     }
   };
   

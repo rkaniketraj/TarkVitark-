@@ -1,5 +1,5 @@
 import mongoose from "mongoose";
-const { Schema } = mongoose;
+const Schema = mongoose.Schema;
 
 const messageSchema = new Schema({
   debateId: {
@@ -11,62 +11,19 @@ const messageSchema = new Schema({
   sender: {
     type: Schema.Types.ObjectId,
     ref: 'User',
-    required: true,
-    index: true
+    required: true
   },
   content: {
     type: String,
-    required: function() {
-      return !this.voiceUrl;
-    },
-    trim: true,
-    maxlength: [1000, 'Message cannot exceed 1000 characters']
-  },
-  voiceUrl: {
-    type: String,
-    required: function() {
-      return !this.content;
-    }
-  },
-  type: {
-    type: String,
-    enum: ['text', 'voice', 'system'],
     required: true,
-    default: function() {
-      if (this.voiceUrl) return 'voice';
-      return 'text';
-    }
+    trim: true
   },
-  language: {
-    type: String,
-    required: true,
-    default: 'en'
-  },
-  translations: {
-    type: Map,
-    of: String,
-    default: () => new Map()
-  },
-  reactions: [{
-    user: {
-      type: Schema.Types.ObjectId,
-      ref: 'User',
-      required: true
-    },
-    emoji: {
-      type: String,
-      required: true
-    },
-    createdAt: {
-      type: Date,
-      default: Date.now
-    }
-  }],
   translatedText: {
     type: Map,
     of: String,
-    default: () => new Map()
+    default: {}
   },
+  
   flagged: {
     type: Boolean,
     default: false
@@ -79,7 +36,7 @@ const messageSchema = new Schema({
   timestamps: true
 });
 
-// Indexes for efficient queries
+// Index for efficient queries
 messageSchema.index({ debateId: 1, createdAt: 1 });
 messageSchema.index({ sender: 1, createdAt: -1 });
 messageSchema.index({ flagged: 1 }, { sparse: true });
@@ -94,14 +51,6 @@ messageSchema.methods.addTranslation = function(langCode, text) {
   this.translatedText.set(langCode, text);
   return this.save();
 };
-
-// Pre-save middleware to validate content
-messageSchema.pre('save', function(next) {
-  if (!this.content && !this.voiceUrl) {
-    next(new Error('Message must have either text content or voice URL'));
-  }
-  next();
-});
 
 // Static method to find recent messages in a debate
 messageSchema.statics.findRecentByDebate = function(debateId, limit = 50) {

@@ -54,8 +54,7 @@ const handleSubmit = async (e) => {
 
     if (response.ok) {
       console.log('✅ Login successful:', data);
-      // Save user and token to AuthContext
-      login(data.data.user, data.data.accessToken);
+      login(); // Call login function from AuthContext
       navigate('/home'); // redirect after success
     } else {
       console.error('❌ Login failed:', data.message || 'Invalid credentials');

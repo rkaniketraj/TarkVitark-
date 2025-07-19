@@ -1,13 +1,86 @@
+
+// import axios from 'axios';
+
+// import api from '../lib/axios';
+// const API_URL = import.meta.env.VITE_API_URL;
+
+// const debateService = {  // Get list of active debates
+//   getActiveDebates: async () => {
+//     const response = await api.get('/debates/active');
+//     return response.data.data;
+//   },
+//   // Get list of upcoming debates
+//   getUpcomingDebates: async () => {
+//     const response = await api.get('/debates/upcoming');
+//     return response.data.data;
+//   },
+
+//   // Get details for a specific debate
+//   getDebateDetails: async (debateId) => {
+//     const response = await axios.get(`${API_URL}/debates/${debateId}`);
+//     return response.data.data;
+//   },
+//   // Register for a debate
+//   registerForDebate: async (debateId, stance, agreedToRules) => {
+//     const response = await api.post('/debates/register', {
+//       debateId,
+//       stance,
+//       agreedToRules
+//     });
+//     return response.data;
+//   },
+
+//   // Create a new debate
+//   createDebate: async (debateData) => {
+//     const response = await axios.post(
+//       `${API_URL}/debates/create`, 
+//       debateData,
+//       {
+//         headers: {
+//           'Content-Type': 'application/json',
+//         },
+//         withCredentials: true,
+//       }
+//     );
+//     return response.data;
+//   },
+
+//   // Get debates hosted by the current user
+//   getHostedDebates: async () => {
+//     const response = await axios.get(
+//       `${API_URL}/debates/hosted`,
+//       { withCredentials: true }
+//     );
+//     return response.data.data;
+//   },
+
+//   // Get debates participated in by the current user
+//   getParticipatedDebates: async () => {
+//     const response = await axios.get(
+//       `${API_URL}/debates/participated`,
+//       { withCredentials: true }
+//     );
+//     return response.data.data;
+//   },
+// };
+
+// export default debateService;
+
+
 import api from '../lib/axios';
 
-/**
- * Service for handling debate-related API calls
- */
 const debateService = {
   // Get list of active debates
   getActiveDebates: async () => {
     const response = await api.get('/debates/active');
     return response.data.data;
+  },
+
+
+  // Create a debate room (new endpoint)
+  createDebateRoom: async (roomData) => {
+    const response = await api.post('/debates/debate-room', roomData);
+    return response.data;
   },
 
   // Get list of upcoming debates
@@ -22,100 +95,39 @@ const debateService = {
     return response.data.data;
   },
 
-  // Create a new debate
-  createDebate: async (debateData) => {
-    const response = await api.post('/debates/create', debateData);
-    return response.data.data;
-  },
+  unregisterFromDebate: async (debateId) => {
+  const response = await api.post('/debates/unregister', { debateId });
+  return response.data;
+},
 
-  // Register for a debate
-  registerForDebate: async (debateId, stance) => {
+  // Register for a debate (used by both ActiveDiscussion and FutureEvents)
+  registerForDebate: async (debateId, stance, agreedToRules) => {
+    // Backend expects: debateId, stance, agreedToRules
     const response = await api.post('/debates/register', {
       debateId,
       stance,
-      agreedToRules: true
+      agreedToRules
     });
-    return response.data.data;
-  },
-
-  // Unregister from a debate
-  unregisterFromDebate: async (debateId) => {
-    const response = await api.post('/debates/unregister', { debateId });
     return response.data;
   },
 
-  // Join an active debate
-  joinDebate: async (debateId) => {
-    const response = await api.post('/debates/join', { debateId });
-    return response.data.data;
+  // Create (host) a new debate
+  createDebate: async (debateData) => {
+    const response = await api.post('/debates/create', debateData);
+    return response.data;
   },
 
-  // Leave a debate
-  leaveDebate: async (debateId) => {
-    const response = await api.post('/debates/leave', { debateId });
-    return response.data.data;
-  },
-
-  // Update debate status
-  updateDebateStatus: async (debateId, status) => {
-    const response = await api.patch('/debates/update-status', {
-      debateId,
-      status
-    });
-    return response.data.data;
-  },
-
-  // Vote on a debate
-  voteOnDebate: async (debateId, stance) => {
-    const response = await api.post(`/debates/${debateId}/vote`, { stance });
-    return response.data.data;
-  },
-
-  // Get debate messages
-  getMessages: async (debateId, page = 1, limit = 50) => {
-    const response = await api.get(`/debates/${debateId}/messages`, {
-      params: { page, limit }
-    });
-    return response.data.data;
-  },
-
-  // Send a message
-  sendMessage: async (debateId, content, voiceUrl = null) => {
-    const response = await api.post(`/debates/${debateId}/messages`, {
-      content,
-      voiceUrl
-    });
-    return response.data.data;
-  },
-
-  // Get user's hosted debates
+  // Get debates hosted by the current user
   getHostedDebates: async () => {
     const response = await api.get('/debates/hosted');
     return response.data.data;
   },
 
-  // Get user's participated debates
+  // Get debates the current user has participated in
   getParticipatedDebates: async () => {
     const response = await api.get('/debates/participated');
     return response.data.data;
   },
-
-  // Get debate statistics
-  getDebateStats: async (debateId) => {
-    const response = await api.get(`/debates/${debateId}/stats`);
-    return response.data.data;
-  },
-
-  // Search debates
-  searchDebates: async (query, filters = {}) => {
-    const response = await api.get('/debates/search', {
-      params: {
-        q: query,
-        ...filters
-      }
-    });
-    return response.data.data;
-  }
 };
 
 export default debateService;

@@ -25,7 +25,7 @@
 //         <Route path="/home" element={<HomePage />} />
 //         <Route path="/login" element={<Login />} />
 //         <Route path="/register" element={<Register />} />
-//         <Route path="/active/:debateId" element={<ActiveDiscussion />} />
+//         <Route path="/active" element={<ActiveDiscussion />} />
 //         <Route path="/upcoming" element={<FutureEvents />} />
 //         <Route path="/profile" element={<ProfilePage />} />
 //         <Route path="/discuss" element={<DiscussionPage/>}/>
@@ -67,7 +67,7 @@ const App = () => {
 
           {/* Protected Routes */}
           <Route path="/home" element={<PrivateRoute><HomePage /></PrivateRoute>} />
-          <Route path="/active/:debateId" element={<PrivateRoute><ActiveDiscussion /></PrivateRoute>} />
+          <Route path="/active" element={<PrivateRoute><ActiveDiscussion /></PrivateRoute>} />
           <Route path="/upcoming" element={<PrivateRoute><FutureEvents /></PrivateRoute>} />
           <Route path="/profile" element={<PrivateRoute><ProfilePage /></PrivateRoute>} />
           <Route path="/discuss" element={<PrivateRoute><DiscussionPage /></PrivateRoute>} />
