@@ -1,5 +1,6 @@
 import { Router } from 'express';
-import { getMessagesForDebate, sendMessage } from '../controllers/message.controller.js';
+// --- CORRECTION: Removed 'sendMessage' from the import ---
+import { getMessagesForDebate } from '../controllers/message.controller.js';
 import { verifyJWT } from '../middlewares/auth.middleware.js';
 
 const router = Router();
@@ -7,9 +8,9 @@ const router = Router();
 // All message routes require authentication
 router.use(verifyJWT);
 
-// Get all messages for a debate
-router.get('/debate/:debateId', getMessagesForDebate);
-// Send a message to a debate
-router.post('/debate/:debateId', sendMessage);
+// Route to get all messages for a specific debate
+router.get('/:debateId', getMessagesForDebate);
+
+// --- CORRECTION: Removed the unused POST route ---
 
 export default router;

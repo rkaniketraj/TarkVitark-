@@ -91,7 +91,8 @@ const registerForDebate = asyncHandler(async (req, res) => {
   // Check if user is already registered
   const existingRegistration = await DebateRegistration.findOne({
     debate: debateId,
-    user: userId
+    //user: userId
+    "participant.user": userId
   });
 
   if (existingRegistration) {
@@ -99,15 +100,25 @@ const registerForDebate = asyncHandler(async (req, res) => {
   }
 
   // Create registration and update debate participants
+
   const registration = await DebateRegistration.create({
     debate: debateId,
-    user: userId,
-    stance,
-    agreedToRules
+    participant: {          // Create the nested 'participant' object
+      user: userId,
+      stance,
+      agreedToRules
+    }
   });
 
+  // const registration = await DebateRegistration.create({
+  //   debate: debateId,
+  //   user: userId,
+  //   stance,
+  //   agreedToRules
+  // });
+
   // Update debate participants
-  debate.participants.push({ user: userId, stance });
+  debate.participants.push(userId);
   await debate.save();
 
   return res.status(201).json(

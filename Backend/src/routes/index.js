@@ -9,7 +9,7 @@ import discussionRouter from './discussion.routes.js';
 const router = Router();
 
 router.use('/debates', debateRouter);
-router.use('/debates/messages', messageRouter);
+router.use('/messages', messageRouter);
 router.use('/debates/votes', voteRouter);
 router.use('/discussions', discussionRouter);
 router.use('/users', userRouter);
