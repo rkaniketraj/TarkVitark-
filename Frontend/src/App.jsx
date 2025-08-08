@@ -44,7 +44,7 @@ import { Routes, Route } from 'react-router-dom';
 
 import HomePage from './pages/HomePage';
 import Landing from './pages/Landing';
-import Login from './pages/login';
+import Login from './pages/Login';
 import Register from './pages/Register';
 import ActiveDiscussion from './pages/ActiveDiscussion';
 import FutureEvents from './pages/FutureEvents';
