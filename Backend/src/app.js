@@ -8,7 +8,7 @@ const app = express();
 
 // CORS Configuration
 app.use(cors({
-    origin: '*',
+    origin: "https://tark-vitark.vercel.app/",
     credentials: true
 }));
 
