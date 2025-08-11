@@ -212,7 +212,7 @@ import Navbar from '../components/Navbar';
 import LeftSideBar from '../components/LeftSideBar';
 import userService from '../services/userService';
 
-const SOCKET_URL = import.meta.env.VITE_API_BASE_URL;
+const SOCKET_URL = `${import.meta.env.VITE_API_BASE_URL}`;
 
 function DiscussionPage() {
   const [messages, setMessages] = useState([]);
