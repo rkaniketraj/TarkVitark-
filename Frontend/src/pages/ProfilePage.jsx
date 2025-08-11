@@ -11,7 +11,7 @@ export default function ProfilePage() {
   useEffect(() => {
     const getUser = async () => {
       try {
-        const res = await fetch('http://localhost:8000/api/v1/users/current', {
+        const res = await fetch(`${import.meta.env.VITE_API_BASE_URL}/api/v1/users/current`, {
           credentials: 'include',
         });
 
