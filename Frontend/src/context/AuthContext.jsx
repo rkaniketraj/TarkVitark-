@@ -9,7 +9,7 @@ export const AuthProvider = ({ children }) => {
   useEffect(() => {
     const checkLogin = async () => {
       try {
-        const response = await fetch(`${import.meta.env.VITE_API_BASE_URL}/api/v1/users/current`, {
+        const response = await fetch(`${import.meta.env.VITE_API_BASE_URL}/users/current`, {
           credentials: 'include',
         });
         setIsLoggedIn(response.ok);

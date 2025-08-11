@@ -207,7 +207,7 @@ function Register() {
     }
 
     try {
-      const res = await fetch(`${import.meta.env.VITE_API_BASE_URL}/api/v1/users/register`, {
+      const res = await fetch(`${import.meta.env.VITE_API_BASE_URL}/users/register`, {
         method: 'POST',
         credentials: 'include',
         body: payload

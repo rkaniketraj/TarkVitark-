@@ -241,7 +241,7 @@ function DiscussionPage() {
         setCurrentUser(userData);
 
         // 2. Fetch the persistent chat history
-        const historyResponse = await axios.get(`/api/v1/messages/${roomId}`);
+        const historyResponse = await axios.get(`/messages/${roomId}`);
         const history = historyResponse.data.data;
         setMessages(Array.isArray(history) ? history : []);
 
